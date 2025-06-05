@@ -1,0 +1,3 @@
+spaceship.png - 主要飛船動畫圖片
+flame.png - 火焰效果圖片（可選）
+home-spaceship.png - 回到主頁按鈕的飛船圖片

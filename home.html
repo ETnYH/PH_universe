@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>噗啾&呼嚕作品集網站</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 星空背景 -->
+    <div class="stars">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+
+    <header>
+        <div class="logo">
+            <img src="image/LOGO.png" alt="宇宙探索LOGO"> 
+        </div>
+        <div class="contact-info">
+            <div class="contact-item">
+                <div class="contact-icon-wrapper">
+                    <span class="contact-icon">📧</span>
+                </div>
+                <a href="mailto:etnyh0407@gmail.com" class="contact-link">
+                    <span class="contact-label">Gmail</span>
+                    <span class="contact-detail">etnyh0407@gmail.com</span>
+                </a>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon-wrapper">
+                    <span class="contact-icon">🚀</span>
+                </div>
+                <a href="https://lin.ee/67sdI6t" class="contact-link" target="_blank">
+                    <span class="contact-label">Line</span>
+                    <span class="contact-detail">@136cxmhd</span>
+                </a>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon-wrapper">
+                    <span class="contact-icon">🌌</span>
+                </div>
+                <a href="https://www.instagram.com/et_shamon0.0/" class="contact-link" target="_blank">
+                    <span class="contact-label">IG</span>
+                    <span class="contact-detail">@et_shamon0.0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- 導航條 - 點點和小飛船 -->
+        <div class="navigation-bar">
+            <div class="nav-track">
+                <div class="nav-dot" data-page="left">
+                    <img src="image/left.png" alt="左頁面" class="nav-dot-image">
+                </div>
+                <div class="nav-dot active" data-page="main">
+                    <img src="image/home.png" alt="主頁面" class="nav-dot-image">
+                </div>
+                <div class="nav-dot" data-page="right">
+                    <img src="image/right.png" alt="右頁面" class="nav-dot-image">
+                </div>
+                <div class="nav-spaceship">
+                    <img src="image/spaceship.png" alt="導航飛船" class="nav-spaceship-image">
+                </div>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="slide-container" id="slide-container">
+                <div class="slide-page">
+                    <iframe src="left-content.html" frameborder="0"></iframe>
+                </div>
+                <div class="slide-page">
+                    <iframe id="content-frame" src="initial-content.html" frameborder="0"></iframe>
+                </div>
+                <div class="slide-page">
+                    <iframe src="right-content.html" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

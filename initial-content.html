@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅行開始</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: transparent;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            height: auto;
+            box-sizing: border-box;
+        }
+        html {
+            height: auto;
+        }
+        .welcome {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px 0;
+            margin: 0;
+            min-height: auto;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        .planets-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 30px;
+        }
+        .planet {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .planet:hover {
+            transform: scale(1.1);
+        }
+        .planet img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+        .planet-description {
+            text-align: center;
+            font-size: 1.1em;
+            line-height: 1.4;
+            max-width: 200px;
+        }
+        .planet-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #FFD700;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome">
+        <h1>歡迎來到<br>噗啾&呼嚕的世界</h1>
+        <p>選擇你要去的星球吧!</p>
+        
+        <div class="planets-container">
+            <div class="planet" id="left-planet" onclick="parent.spaceNavigation.navigateToPage('left')">
+                <img src="image/left.png" alt="噗啾星系">
+                <div class="planet-description">
+                    <div class="planet-title">噗啾星系</div>
+                    <div>ET<br>#設計 #網頁 #遊戲製作</div>
+                </div>
+            </div>
+            
+            <div class="planet" id="right-planet" onclick="parent.spaceNavigation.navigateToPage('right')">
+                <img src="image/right.png" alt="呼嚕星系">
+                <div class="planet-description">
+                    <div class="planet-title">呼嚕星系</div>
+                    <div>YH<br>#程式 #遊戲製作 #AI</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
