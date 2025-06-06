@@ -36,17 +36,17 @@ function skipToHome() {
     let textAnimationActive = false;
     let currentTextLine = 0;
     let textAppearFrames = 0;
-    const TEXT_FADE_IN_DURATION = 10;   // 淡入时间
-    const TEXT_DISPLAY_DURATION = 30;   // 完全显示时间
-    const TEXT_FADE_OUT_DURATION = 10;  // 淡出时间
+    const TEXT_FADE_IN_DURATION = 5;   // 淡入时间
+    const TEXT_DISPLAY_DURATION = 20;   // 完全显示时间
+    const TEXT_FADE_OUT_DURATION = 5;  // 淡出时间
     const TEXT_TOTAL_DURATION = TEXT_FADE_IN_DURATION + TEXT_DISPLAY_DURATION + TEXT_FADE_OUT_DURATION; // 总持续时间
     const GALAXY_TEXT_TRIGGER = 0.4;  // 银河系放大到80%时触发文字
     
     // Hyperspace Jump Animation
     let hyperspaceActive = false;
     let hyperspaceFrames = 0;
-    const HYPERSPACE_DURATION = 120; // 星际穿梭持续时间
-    const HYPERSPACE_DELAY = 5;     // 文字结束后的延迟时间
+    const HYPERSPACE_DURATION = 100; // 星际穿梭持续时间
+    const HYPERSPACE_DELAY = 3;     // 文字结束后的延迟时间
     
     // Meteor Images
     let meteorImages = [];
