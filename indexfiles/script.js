@@ -46,7 +46,7 @@ function skipToHome() {
     let hyperspaceActive = false;
     let hyperspaceFrames = 0;
     const HYPERSPACE_DURATION = 100; // 星际穿梭持续时间
-    const HYPERSPACE_DELAY = 40;     // 文字结束后的延迟时间
+    const HYPERSPACE_DELAY = 10;     // 文字结束后的延迟时间
     
     // Meteor Images
     let meteorImages = [];
