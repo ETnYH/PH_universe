@@ -3,6 +3,85 @@ function skipToHome() {
     window.location.href = 'home.html';
 }
 
+// Skip按钮躲避功能
+let skipButton;
+let isEvading = false;
+let currentCorner = 0; // 0=右上, 1=左上, 2=左下, 3=右下
+const corners = [
+    { top: '20px', right: '20px', left: 'auto', bottom: 'auto' }, // 右上
+    { top: '20px', left: '20px', right: 'auto', bottom: 'auto' }, // 左上
+    { bottom: '20px', left: '20px', right: 'auto', top: 'auto' }, // 左下
+    { bottom: '20px', right: '20px', left: 'auto', top: 'auto' }  // 右下
+];
+
+function initSkipButton() {
+    skipButton = document.getElementById('skipButton');
+    if (skipButton) {
+        // 监听鼠标移动事件
+        document.addEventListener('mousemove', handleMouseMove);
+        
+        // 阻止按钮上的hover效果触发躲避
+        skipButton.addEventListener('mouseenter', function(e) {
+            e.stopPropagation();
+        });
+    }
+}
+
+function handleMouseMove(e) {
+    if (!skipButton || isEvading) return;
+    
+    const buttonRect = skipButton.getBoundingClientRect();
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+    
+    // 计算鼠标与按钮中心的距离
+    const buttonCenterX = buttonRect.left + buttonRect.width / 2;
+    const buttonCenterY = buttonRect.top + buttonRect.height / 2;
+    const distance = Math.sqrt(
+        Math.pow(mouseX - buttonCenterX, 2) + 
+        Math.pow(mouseY - buttonCenterY, 2)
+    );
+    
+    // 如果鼠标距离按钮太近（80像素内），按钮就逃跑
+    if (distance < 80) {
+        evadeToRandomCorner();
+    }
+}
+
+function evadeToRandomCorner() {
+    if (isEvading) return;
+    
+    isEvading = true;
+    
+    // 随机选择一个不是当前位置的角落
+    let newCorner;
+    do {
+        newCorner = Math.floor(Math.random() * 4);
+    } while(newCorner === currentCorner);
+    
+    currentCorner = newCorner;
+    const newPosition = corners[currentCorner];
+    
+    // 应用新位置
+    Object.keys(newPosition).forEach(key => {
+        skipButton.style[key] = newPosition[key];
+    });
+    
+    // 添加一个小的抖动效果
+    skipButton.style.transform = 'scale(0.9) rotate(5deg)';
+    
+    // 500毫秒后恢复正常状态，允许下次躲避
+    setTimeout(() => {
+        skipButton.style.transform = 'scale(1) rotate(0deg)';
+        setTimeout(() => {
+            isEvading = false;
+        }, 100);
+    }, 500);
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', initSkipButton);
+
 // Overwrite entire file with improved animation script
 (function(){
     const canvas = document.getElementById('meteorCanvas');
@@ -18,6 +97,129 @@ function skipToHome() {
     // Meteors
     const METEOR_SPEED = 1.2;
     const meteors = [];
+    
+    // Sparkles system for meteors
+    let sparkles = [];
+    
+    // Sparkle class
+    class Sparkle {
+        constructor(x, y, vx, vy) {
+            this.x = x;
+            this.y = y;
+            // 火花朝移动方向的相反方向喷射
+            const speed = Math.sqrt(vx * vx + vy * vy);
+            if (speed > 0) {
+                const dirX = vx / speed;
+                const dirY = vy / speed;
+                
+                // 主要朝反方向，加上一些随机扩散
+                const backSpeed = speed * (0.3 + Math.random() * 0.4); // 30%-70%的反向速度
+                const randomAngle = (Math.random() - 0.5) * Math.PI * 0.5; // ±45度的随机角度
+                
+                this.vx = -dirX * backSpeed * Math.cos(randomAngle) - dirY * backSpeed * Math.sin(randomAngle);
+                this.vy = -dirY * backSpeed * Math.cos(randomAngle) + dirX * backSpeed * Math.sin(randomAngle);
+            } else {
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+            }
+            
+            this.life = 1.0; // 生命值从1到0
+            this.decay = 0.008 + Math.random() * 0.012; // 进一步减慢衰减速度，让火花持续更久
+            this.size = 6 + Math.random() * 12; // 大幅增加火花大小 (从6-14增加到12-28)
+            this.color = Math.random() < 0.3 ? 'white' : (Math.random() < 0.6 ? 'orange' : 'yellow'); // 添加白色火花
+            this.twinkle = Math.random() * Math.PI * 2; // 闪烁相位
+        }
+        
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.life -= this.decay;
+            this.twinkle += 0.3;
+            
+            // 移除重力效果，只添加轻微的空气阻力
+            this.vx *= 0.98;
+            this.vy *= 0.98;
+            
+            return this.life > 0;
+        }
+        
+        draw(ctx) {
+            if (this.life <= 0) return;
+            
+            ctx.save();
+            ctx.globalAlpha = this.life * (0.7 + 0.3 * Math.sin(this.twinkle)); // 增加基础透明度
+            
+            // 绘制更大更长的星形火花
+            ctx.translate(this.x, this.y);
+            ctx.fillStyle = this.color;
+            
+            // 绘制更粗更长的十字星形
+            const size = this.size * this.life;
+            const thickness = Math.max(3, size * 0.25); // 增加厚度
+            const length = size * 1.5; // 增加长度倍数
+            ctx.fillRect(-length/2, -thickness/2, length, thickness);
+            ctx.fillRect(-thickness/2, -length/2, thickness, length);
+            
+            // 绘制更粗更长的对角线
+            ctx.rotate(Math.PI / 4);
+            const diagonalLength = length * 0.9; // 对角线也增加长度
+            const diagonalThickness = Math.max(2, size * 0.2);
+            ctx.fillRect(-diagonalLength/2, -diagonalThickness/2, diagonalLength, diagonalThickness);
+            ctx.fillRect(-diagonalThickness/2, -diagonalLength/2, diagonalThickness, diagonalLength);
+            
+            // 添加更大的光晕效果
+            ctx.globalAlpha = this.life * 0.3;
+            ctx.fillStyle = 'white';
+            const glowLength = length * 1.3; // 光晕也增加长度
+            const glowThickness = Math.max(2, thickness * 0.8);
+            ctx.rotate(-Math.PI / 4); // 恢复旋转
+            ctx.fillRect(-glowLength/2, -glowThickness/2, glowLength, glowThickness);
+            ctx.fillRect(-glowThickness/2, -glowLength/2, glowThickness, glowLength);
+            
+            ctx.restore();
+        }
+    }
+    
+    // 创建火花的函数
+    function createSparkles(x, y, vx, vy, count = 6) { // 增加默认数量从3到6
+        // 计算陨石移动方向的反方向
+        const speed = Math.sqrt(vx * vx + vy * vy);
+        if (speed === 0) return; // 如果陨石不移动，不生成火花
+        
+        // 标准化移动方向
+        const dirX = vx / speed;
+        const dirY = vy / speed;
+        
+        for (let i = 0; i < count; i++) {
+            // 在陨石后方（移动方向的反方向）生成火花
+            const backDistance = 20 + Math.random() * 30; // 距离陨石20-35像素
+            const backX = x - dirX * backDistance;
+            const backY = y - dirY * backDistance;
+            
+            // 添加一些随机扩散，但主要在垂直于移动方向的轴上
+            const perpX = -dirY; // 垂直方向
+            const perpY = dirX;
+            const scatter = (Math.random() - 0.5) * 40;
+            
+            sparkles.push(new Sparkle(
+                backX + perpX * scatter,
+                backY + perpY * scatter,
+                vx, // 直接传入陨石速度
+                vy
+            ));
+        }
+    }
+    
+    // 更新和绘制所有火花
+    function updateAndDrawSparkles() {
+        sparkles = sparkles.filter(sparkle => {
+            const alive = sparkle.update();
+            if (alive) {
+                sparkle.draw(ctx);
+            }
+            return alive;
+        });
+    }
     
     // Travel
     let stars = [];
@@ -261,7 +463,12 @@ function skipToHome() {
     
     // Function to draw a single meteor
     function drawMeteor(meteor) {
-        // 使用已加载的陨石图片
+        // 先绘制火花（在陨石后方）
+        if (phase === 'meteors' && Math.random() < 0.6) { // 从30%增加到60%概率生成火花
+            createSparkles(meteor.x, meteor.y, meteor.dx, meteor.dy, 4); // 每次生成4个火花
+        }
+        
+        // 然后绘制陨石（在火花前方）
         if (useCustomImages && meteorImages[meteor.imageIndex] && meteorImages[meteor.imageIndex] !== null) {
             drawImageMeteor(meteor);
         } else {
@@ -1186,11 +1393,16 @@ function skipToHome() {
         ctx.fillStyle = `hsla(${galaxyHue}, 64%, 3%, 1)`;
         ctx.fillRect(0,0,canvas.width,canvas.height);
         if(phase==='meteors'){
+            // 先更新和绘制火花（在陨石后方）
+            updateAndDrawSparkles();
+            
+            // 然后绘制陨石（在火花前方）
             meteors.forEach(m => {
                 drawMeteor(m);
                 m.x += m.dx;
                 m.y += m.dy;
             });
+            
             frame++; // 增加幀計數器用於動畫效果
             const d=Math.hypot(meteors[0].x-meteors[1].x,meteors[0].y-meteors[1].y);
             // 精确的碰撞检测：陨石半径是50像素，所以两个陨石中心距离100像素时就碰撞了
