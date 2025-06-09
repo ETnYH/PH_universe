@@ -3,41 +3,1492 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>噗啾星系</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(45deg, #2d1b69, #11998e);
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-        html {
-            height: auto;
-        }
-        .content {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px 0;
-            margin: 0;
-        }
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-    </style>
+    <title>噗啾星系 - 作品集</title>
+    <link rel="stylesheet" href="portfolio.css">
 </head>
 <body>
-    <div class="content">
-        <h1>🌌 左側頁面</h1>
-        <p>您已到達左側頁面！</p>
-        <p>向右滑動或點擊右箭頭返回主頁面</p>
+    <div class="container">
+        <!-- 個人介紹區域 -->
+        <aside class="profile-section">
+            <div class="profile-avatar">
+                <img src="P_image/avatar.jpg" alt="個人頭像" class="avatar-image">
+            </div>
+            <div class="profile-info">
+                <h2>林苡婷</h2>
+                <h2>YiTing Lin</h2>
+                <p class="title">設計師 & 開發者</p>
+                <p class="title">Designer & Developer</p>
+                <div class="profile-description">
+                    歡迎來到噗啾的宇宙！<br>我是林苡婷，綽號ET，喜歡探索和挑戰新事物，專長包括平面設計、插畫創作、網頁開發和遊戲製作。<br>我相信設計和科技的結合能創造出無限可能，期待與您一起探索這個可愛的星系！
+                </div>
+                <div class="skills">
+                    <h3>🛠️ 技能專長</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Photoshop</span>
+                        <span class="skill-tag">Illustrator</span>
+                        <span class="skill-tag">Sketchbook</span>
+                        <span class="skill-tag">HTML/CSS</span>
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">C#</span>
+                        <span class="skill-tag">Unity</span>
+                        <span class="skill-tag">威力導演</span>
+                        <span class="skill-tag">ableton live</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 作品展示區域 -->
+        <main class="portfolio-section">
+          
+            
+            <div class="planets-container">
+                <div class="planet planet-graphic" data-category="graphic">
+                    <div class="planet-title">平面設計</div>
+                </div>
+                
+                <div class="planet planet-illustration" data-category="illustration">
+                    <div class="planet-title">插畫創作</div>
+                </div>
+                
+                <div class="planet planet-web" data-category="web">
+                    <div class="planet-title">網頁與APP開發</div>
+                </div>
+                
+                <div class="planet planet-game" data-category="game">
+                    <div class="planet-title">遊戲製作</div>
+                </div>
+            </div>
+        </main>
     </div>
+
+    <!-- 作品展示模態框 -->
+    <div id="portfolioModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <div class="works-grid" id="worksGrid">
+                <!-- 作品項目將通過 JavaScript 動態生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 作品詳細資料模態框 -->
+    <div id="detailModal" class="detail-modal">
+        <div class="detail-modal-content">
+            <span class="detail-close">&times;</span>
+            <div class="detail-header">
+                <h2 class="detail-title" id="detailTitle"></h2>
+                <p class="detail-subtitle" id="detailSubtitle"></p>
+            </div>
+            <div class="detail-image" id="detailImage"></div>
+            <div class="detail-content">
+                <div class="detail-main" id="detailMain">
+                    <!-- 詳細內容將通過 JavaScript 動態生成 -->
+                </div>
+                <div class="detail-sidebar" id="detailSidebar">
+                    <!-- 側邊欄信息將通過 JavaScript 動態生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 作品數據（包含詳細資料）
+        const portfolioData = {
+            graphic: {
+                title: "🎨 平面設計作品",
+                works: [
+                    {
+                        id: "brand-design0",
+                        title: "品牌LOGO設計",
+                        description: "為噗啾&呼嚕設計LOGO",
+                        tags: ["LOGO設計"],
+                        icon:  "P_image/G_0/1.png",
+                        
+                    },
+                    {
+                        id: "brand-design",
+                        title: "服裝品牌視覺設計",
+                        description: "為服裝品牌打造完整的品牌視覺識別系統，包含LOGO、名片、商品等設計元素。",
+                        tags: ["LOGO設計", "品牌識別", "印刷設計"],
+                        icon: "P_image/G_1/1.jpg",
+                        details: {
+                            subtitle: "完整視覺設計專案",
+                            fullDescription: "此專案為構想一個潮流品牌，從概念發想到最終設計，涵蓋了品牌策略、視覺設計、印刷應用等多個層面。",
+                            images: [
+                                "P_image/G_1/1.jpg",
+                                "P_image/G_1/2.jpg",
+                                "P_image/G_1/3.jpg",
+                                "P_image/G_1/4.jpg",
+                                "P_image/G_1/5.jpg",
+                                "P_image/G_1/6.jpg",
+                                "P_image/G_1/7.jpg",
+                                "P_image/G_1/8.jpg",
+                                "P_image/G_1/9.jpg",
+                                "P_image/G_1/10.jpg",
+                                "P_image/G_1/11.jpg",
+                                "P_image/G_1/12.jpg",
+                                "P_image/G_1/13.jpg",
+                                "P_image/G_1/14.jpg",
+                                "P_image/G_1/15.jpg",
+                                "P_image/G_1/16.jpg",
+                                "P_image/G_1/17.jpg",
+                                "P_image/G_1/18.jpg",
+                                "P_image/G_1/19.jpg",
+                                "P_image/G_1/20.jpg",
+                                "P_image/G_1/21.jpg",
+                                "P_image/G_1/22.jpg"
+                            ],
+                            sections: [
+                                {
+                                    title: "專案背景",
+                                    content: "品牌視覺設計需要建立完整的識別系統，從LOGO設計到應用物品，每個元素都要呼應品牌核心價值。"
+                                },
+                                {
+                                    title: "設計理念",
+                                    content: "以簡約現代為設計主軸，運用幾何元素和溫暖色調，創造親和力十足的品牌形象。"
+                                },
+                                {
+                                    title: "設計成果",
+                                    content: "完成包含主標誌、輔助圖形、色彩系統、字體規範、名片、信紙等完整的視覺識別系統。"
+                                }
+                            ],
+                            client: "N/A (課堂專案)",
+                            duration: "2週",
+                            tools: ["Adobe Illustrator", "Adobe Photoshop", "Adobe InDesign"],
+                            year: "2022"
+                        }
+                    },
+                    {
+                        id: "brand-design2",
+                        title: "遊戲公司LOGO設計",
+                        description: "為遊戲公司設計LOGO",
+                        tags: ["LOGO設計", "品牌識別"],
+                        icon: "P_image/G_2/12.png",
+                        details: {
+                            subtitle: "LOGO設計專案",
+                            fullDescription: "此專案為構想一個遊戲公司，並為其設計品牌LOGO",
+                            images: [
+                                "P_image/G_2/3.png",
+                                "P_image/G_2/4.png",
+                                "P_image/G_2/5.png",
+                                "P_image/G_2/7.png",
+                                "P_image/G_2/9.png",
+                                "P_image/G_2/10.png",
+                                "P_image/G_2/11.png",
+                                "P_image/G_2/12.png",
+                                "P_image/G_2/13.png"
+                            ],
+                            sections: [
+                                {
+                                    title: "專案背景",
+                                    content: "此為課堂專案，非實際客戶需求。"
+                                },
+                                {
+                                    title: "設計理念",
+                                    content: "以公司名稱為主要設計元素，結合遊戲相關元素，傳達創新和可愛的品牌形象。色彩選擇以粉色和黑色為主調。"
+                                },
+                                {
+                                    title: "設計成果",
+                                    content: "完成包含LOGO、色彩系統、字體規範等完整的品牌識別設計。"
+                                }
+                            ],
+                            client: "N/A (課堂專案)",
+                            duration: "1週",
+                            tools: ["Adobe Illustrator", "Adobe Photoshop"],
+                            year: "2022"
+                        }
+                    },
+                    {
+                        id: "brand-design3",
+                        title: "婚紗公司LOGO設計",
+                        description: "為婚紗公司設計LOGO",
+                        tags: ["LOGO設計", "品牌識別"],
+                        icon:  "P_image/G_3/7.png",
+                        details: {
+                            subtitle: "LOGO設計專案",
+                            fullDescription: "此專案為構想一個婚紗公司，並為其設計品牌LOGO",
+                            images: [
+                                "P_image/G_3/3.png",
+                                "P_image/G_3/4.png",
+                                "P_image/G_3/5.png",
+                                "P_image/G_3/6.png",
+                                "P_image/G_3/7.png"
+                            ],
+                            sections: [
+                                {
+                                    title: "專案背景",
+                                    content: "此為課堂專案，非實際客戶需求。"
+                                },
+                                {
+                                    title: "設計理念",
+                                    content: "以婚紗為主要設計元素，加上5:20的時鐘指針，傳達浪漫的品牌形象。"
+                                },
+                                {
+                                    title: "設計成果",
+                                    content: "完成包含LOGO、色彩系統、字體規範等完整的品牌識別設計。"
+                                }
+                            ],
+                            client: "N/A (課堂專案)",
+                            duration: "1週",
+                            tools: ["Adobe Illustrator", "Adobe Photoshop"],
+                            year: "2022"
+                        }
+                    },
+                    {
+                        id: "brand-design4",
+                        title: "電控科技廠視覺設計",
+                        description: "為科技廠設計LOGO與名片",
+                        tags: ["LOGO設計", "名片設計"],
+                        icon:  "P_image/G_4/7.png",
+                        details: {
+                            subtitle: "LOGO與名片設計專案",
+                            fullDescription: "此專案與三霸電控科技廠合作，為其設計LOGO與名片",
+                            images: [
+                                "P_image/G_4/4.png",
+                                "P_image/G_4/5.png",
+                                "P_image/G_4/6.png",
+                                "P_image/G_4/7.png",
+                                "P_image/G_4/8.png",
+                                "P_image/G_4/9.png"
+                            ],
+                            sections: [
+                                {
+                                    title: "專案背景",
+                                    content: "三霸電控科技廠更新一個現代化的品牌形象，一改以往的傳統LOGO。"
+                                },
+                                {
+                                    title: "設計理念",
+                                    content: "以三霸英文名稱字母為主要設計元素，加上齒輪輪廓，表達科技廠與發展無限的理念。"
+                                },
+                                {
+                                    title: "設計成果",
+                                    content: "完成包含LOGO和名片設計。"
+                                }
+                            ],
+                            client: "三霸電控科技廠",
+                            duration: "1週",
+                            tools: ["Adobe Illustrator", "Adobe Photoshop"],
+                            year: "2022"
+                        }
+                    },
+                    {
+                        id: "brand-design5",
+                        title: "APP LOGO設計",
+                        description: "為課程小組製作的APP設計LOGO",
+                        tags: ["LOGO設計"],
+                        icon:  "P_image/G_4/1.jpeg",
+                        
+                    },
+                    {
+                        id: "brand-design6",
+                        title: "系上聯展LOGO設計",
+                        description: "為系上舉辦的聯合展覽設計主題LOGO和橫幅",
+                        tags: ["LOGO設計","橫幅設計"],
+                        icon:  "P_image/G_4/2.png",
+                        details: {
+                            subtitle: "LOGO與橫幅設計專案",
+                            fullDescription: "擔任系上聯合展覽的美宣，為展覽設計主題LOGO與橫幅",
+                            images: [
+                                "P_image/G_4/2.png",
+                                "P_image/G_4/3.png"
+                            ],
+                            sections: [
+                                {
+                                    title: "專案背景",
+                                    content: "聯展需要一個統一的視覺識別，吸引觀眾並傳達展覽主題。"
+                                },
+                                {
+                                    title: "設計理念",
+                                    content: "展覽主題為無垠，以宇宙和星空為靈感，LOGO結合了星球和宇宙風格字體設計，橫幅則使用了深藍紫色調和閃爍的星星、星球元素。"
+                                },
+                                {
+                                    title: "設計成果",
+                                    content: "完成包含LOGO和橫幅設計。"
+                                }
+                            ],
+                            client: "系上聯合展覽",
+                            duration: "1週",
+                            tools: ["Adobe Illustrator"],
+                            year: "2024"
+                        }
+                    },
+                    {
+                        id: "poster-design1",
+                        title: "電影分級海報設計",
+                        description: "電影分級海報設計，運用可愛小人物和簡要的排版標示分級制度。",
+                        tags: ["海報設計", "內容傳達"],
+                        icon: "P_image/P/1.jpg",
+                        details: {
+                            subtitle: "電影分級海報設計",
+                            fullDescription: "為電影分級制度設計的海報，旨在以可愛的視覺風格吸引觀眾注意，同時清晰傳達分級信息。",
+                            images: [
+                                "P_image/P/1.jpg",
+                                "P_image/P/1.jpg"
+                            ],
+                            sections: [
+                                {
+                                    title: "創意發想",
+                                    content: "以可愛小人物舉牌方式傳達可觀看電影的年齡限制，替換傳統的文字說明。"
+                                }
+                            ],
+                            client: "N/A (課堂專案)",
+                            duration: "1週",
+                            tools: ["Adobe Illustrator", "Sketchbook"],
+                            year: "2022"
+                        }
+                    },
+                    {
+                        id: "poster-design2",
+                        title: "COVID-19講解海報設計",
+                        description: "COVID-19講解海報設計，運用圖解和簡要的排版說明相關知識。",
+                        tags: ["海報設計", "內容傳達"],
+                        icon: "P_image/P/2.png",
+                        details: {
+                            subtitle: "COVID-19講解海報海報設計",
+                            fullDescription: "為COVID-19相關知識設計的海報，旨在以清晰的圖解和簡要文字說明疫情。",
+                            images: [
+                                "P_image/P/2.png",
+                                "P_image/P/2.png"
+                            ],
+                            sections: [
+                                {
+                                    title: "創意發想",
+                                    content: "以圖解方式呈現COVID-19的傳播途徑、症狀和預防措施，替換傳統的文字說明。"
+                                }
+                            ],
+                            client: "N/A (課堂專案)",
+                            duration: "1週",
+                            tools: ["Adobe Illustrator", "Sketchbook"],
+                            year: "2022"
+                        }
+                    },
+                
+                ]
+            },
+            illustration: {
+                title: "✏️ 插畫創作",
+                works: [
+                    {
+                        id: "character-design",
+                        title: "IP角色設計",
+                        description: "為噗啾&呼嚕設計兩個可愛角色",
+                        tags: ["角色設計", "IP","Line貼圖"],
+                        icon: "I_image/Char/3.png",
+                        details: {
+                            subtitle: "IP角色設計",
+                            fullDescription: "為IP噗啾&呼嚕的角色設計，包含角色設定、插畫、LINE貼圖等等。",
+                            images: [
+                                "I_image/Char/3.png",
+                                "I_image/Char/4.png",
+                                "I_image/Char/5.png",
+                                "I_image/Char/6.png",
+                                "I_image/Char/7.png",
+                                "I_image/Char/8.png",
+                                "I_image/Char/9.png",
+                                "I_image/Char/10.png"
+                            ],
+                            sections: [
+                                {
+                                    title: "角色設定",
+                                    content: "噗啾和呼嚕是一對情侶，噗啾是小狐狸，呼嚕是小豬，他們的故事圍繞著日常生活中的小冒險和甜蜜互動。"
+                                },
+                                {
+                                    title: "風格特色",
+                                    content: "噗啾可愛活潑，呼嚕則是溫柔幽默，對新事物都勇於探索。"
+                                },
+                                {
+                                    title: "應用範圍",
+                                    content: "角色可應用於各種周邊商品，Line貼圖受人喜愛。"
+                                }
+                            ],
+                            client: "噗啾&呼嚕",
+                            duration: "2025初至今",
+                            tools: ["Sketchbook"],
+                            year: "2025"
+                        }
+                    },
+                    {
+                        id: "character-design2",
+                        title: "角色設計",
+                        description: "設計公仔角色",
+                        tags: ["角色設計", "公仔"],
+                        icon: "I_image/Char/2.jpg",
+                        details: {
+                            subtitle: "公仔角色設計",
+                            fullDescription: "為一個可愛的公仔角色設計，包含角色設定、風格特色和應用範圍。",
+                            images: [
+                                "I_image/Char/1.png",
+                                "I_image/Char/2.jpg"
+                            ],
+                            sections: [
+                                {
+                                    title: "角色設定",
+                                    content: "由綿羊與獨角獸結合成的大眼睛萌生物"
+                                },
+                                {
+                                    title: "風格特色",
+                                    content: "頭上的小花會隨著他的心情改變，此造型是他的生氣狀態，展示最強的踢踢術"
+                                },
+                                {
+                                    title: "應用範圍",
+                                    content: "角色可應用於貼紙、袋子等等的周邊商品，形成完整的IP體系。"
+                                }
+                            ],
+                            client: "N/A (課堂專案)",
+                            duration: "2週",
+                            tools: ["Adobe Illustrator"],
+                            year: "2022"
+                        }
+                    },
+                    {
+                        id: "character-design3",
+                        title: "角色設計",
+                        description: "設計主題角色",
+                        tags: ["角色設計", "主題角色"],
+                        icon: "I_image/Char/11.png",
+                        details: {
+                            subtitle: "主題角色設計",
+                            fullDescription: "為專案主題發想角色和和角色運用到小手冊。",
+                            images: [
+                                "I_image/Char/11.png",
+                                "I_image/Char/11.png"
+                            ],
+                            sections: [
+                                {
+                                    title: "角色設定",
+                                    content: "搭配專案場地與冰淇淋有關，因此以冰與四季中的冬天發想角色，創作出冬仔"
+                                },
+                                {
+                                    title: "風格特色",
+                                    content: "冬仔個性木訥，但對製造冰有著極高的熱情，會在冰淇淋店裡製作各式各樣的冰品。"
+                                },
+                                {
+                                    title: "應用範圍",
+                                    content: "角色應用於專案AR展示區說明小手冊的封面與門口AR互動區主角。"
+                                }
+                            ],
+                            client: "展開設計有限公司_51冰研所",
+                            duration: "2週",
+                            tools: ["Adobe Illustrator"],
+                            year: "2024"
+                        }
+                    },
+                    {
+                        id: "character-design4",
+                        title: "頭貼設計",
+                        description: "為客戶設計頭貼",
+                        tags: ["頭貼設計"],
+                        icon: "I_image/Char/12.png",
+                        details: {
+                            subtitle: "頭貼設計",
+                            fullDescription: "為客戶設計符合需求的頭貼。",
+                            images: [
+                                "I_image/Char/12.png",
+                                "I_image/Char/12.png"
+                            ],
+                            sections: [
+                                {
+                                    title: "角色設定",
+                                    content: "客戶希望設計一個可愛的頭貼，展現其個性和喜好。"
+                                },
+                                {
+                                    title: "風格特色",
+                                    content: "頭貼以可愛的風格呈現，包含了客戶喜愛的元素，如冰淇淋。"
+                                },
+                                {
+                                    title: "應用範圍",
+                                    content: "頭貼可用於社交媒體、即時通訊軟體等平台，增強個人形象。"
+                                }
+                            ],
+                            client: "客戶專案",
+                            duration: "1天",
+                            tools: ["Sketchbook"],
+                            year: "2023"
+                        }
+                    },
+                    {
+                        id: "character-design5",
+                        title: "遊戲角色與背景設計",
+                        description: "為遊戲設計符合主題的角色與背景",
+                        tags: ["遊戲設計", "角色設計", "背景設計"],
+                        icon: "I_image/Char/13.png",
+                        details: {
+                            subtitle: "遊戲設計",
+                            fullDescription: "為遊戲設計符合主題的角色與背景。",
+                            images: [
+                                "I_image/Char/13.png",
+                                "I_image/Char/14.png",
+                                "I_image/Char/15.png",
+                                "I_image/Char/16.png"
+                                
+                            ],
+                            sections: [
+                                {
+                                    title: "角色設定",
+                                    content: "遊戲內角色設定為初入社會的大學畢業生。"
+                                },
+                                {
+                                    title: "風格特色",
+                                    content: "有點詼諧但可愛的風格，角色設計以簡約線條和明亮色彩為主。"
+                                },
+                                {
+                                    title: "應用範圍",
+                                    content: "角色和背景設計將應用於遊戲內，增強遊戲的視覺體驗。"
+                                }
+                            ],
+                            client: "客戶專案",
+                            duration: "1週",
+                            tools: ["Sketchbook"],
+                            year: "2025"
+                        }
+                    },
+                ]
+            },
+            web: {
+                title: "💻 網頁與APP開發",
+                works: [
+                    {
+                        id: "website",
+                        title: "學習輔助系統網頁",
+                        description: "人工智慧運用於學習診斷與客製化學習輔助",
+                        tags: ["人工智慧", "網頁","學習輔助"],
+                        icon: "WA_image/1.jpeg", 
+                        details: {
+                            subtitle: "網頁結合人工智慧應用開發",
+                            fullDescription: "人工智慧運用於學習診斷與客製化學習輔助，提供學生個性化的學習體驗。",
+                            videoFile: "WA_image/video/1.mp4", 
+                            images: [
+                               
+                            ],
+                            sections: [
+                                {
+                                    title: "專案背景",
+                                    content: "與小組成員共同協作完成，我擔任組長、負責學生功能之衝刺練習題(客製化學習輔助)製作與最後網站整合。"
+                                },
+                                {
+                                    title: "技術實現",
+                                    content: "採用演算法分析學生的學習數據，並根據分析結果生成個人化的練習題目。"
+                                },
+                                {
+                                    title: "功能特色",
+                                    content: "此系統主要分為兩個使用對象。<br>1. 教師　<br>#學生期末成績預測 - 我們蒐集103-109歷年學生成績資料，並利用五種演算法模型，以及兩類成績區間(及格與不及格、以55和65分分割)預測新學期的學生期末成績。<br>#學生章節熟悉分析 - 藉由學生在平時考的成績表現，分析其對各章節的熟悉度，方便老師了解學生的學習情況並加以輔導。<br> 2. 學生<br>#衝刺練習題 (客製化學習輔助) - 讓學生針對較不熟悉的章節進行衝刺練習。本功能使用ChatGPT生成的題目與答案文本(利用RASCEF作為prompt架構生成文本)對TensorFlow LSTM模型作訓練，進而於網站上使學生選擇章節，生成與章節相符的題目以供學生上傳該題程式檔做練習評分。"
+                                }
+                            ],
+                            client: "國立臺中教育大學資訊工程學系",
+                            duration: "1年",
+                            tools: ["Python", "Flask", "TensorFlow", "HTML", "CSS", "JavaScript"],
+                            year: "2024"
+                        }
+                    },
+                    {
+                        id: "website2",
+                        title: "系上網站製作",
+                        description: "為系上網站提出改版建議並製作新網站",
+                        tags: ["網頁"],
+                        icon: "WA_image/2.png", 
+                        details: {
+                            subtitle: "系上網站網站改版建議",
+                            fullDescription: "為系上網站提出改版建議並製作新網站。",
+                            images: [
+                                "WA_image/2.png",
+                                "WA_image/3.png",
+                                "WA_image/4.png"
+                            ],
+                            sections: [
+                                {
+                                    title: "功能架構",
+                                    content: "以系上網站為基礎，提出改版建議並製作新網站，包含首頁、供學生檢視自己的選修課狀況區、分享作品區等功能。"
+                                },
+                                {
+                                    title: "技術特色",
+                                    content: "使用HTML、CSS和JavaScript實現設計，並嘗試嵌入Google表單以收集學生選修課狀況。"
+                                },
+                            ],
+                            client: "國立臺中教育大學數位內容科技學系",
+                            duration: "2週",
+                            tools: ["HTML", "CSS", "JavaScript"],
+                            year: "2023"
+                        }
+                    },
+                    {
+                        id: "website3",
+                        title: "電控科技廠網站設計",
+                        description: "為電控科技廠設計網站，展示其產品和服務。",
+                        tags: ["網頁", "網站設計"],
+                        icon: "WA_image/5.png", 
+                        details: {
+                            subtitle: "電控科技廠網站合作專案",
+                            fullDescription: "為電控科技廠設計網站，展示其產品和服務。",
+                            images: [
+                                "WA_image/5.png",
+                                "WA_image/6.png"
+                            ],
+                            sections: [
+                                {
+                                    title: "功能架構",
+                                    content: "以電控科技廠為基礎，設計網站包含首頁、產品展示、服務介紹、聯絡我們等功能。"
+                                },
+                                {
+                                    title: "技術特色",
+                                    content: "利用網頁切版展示產品與服務，並配合客戶需求進行修改。"
+                                },
+                            ],
+                            client: "三霸電控科技廠",
+                            duration: "2週",
+                            tools: ["HTML", "CSS"],
+                            year: "2023"
+                        }
+                    },
+                    {
+                        id: "website4",
+                        title: "運動結合虛擬寵物軟體",
+                        description: "以鼓勵運動為主題的虛擬寵物軟體，結合運動與遊戲元素。",
+                        tags: ["軟體開發"],
+                        icon: "WA_image/7.png", 
+                        details: {
+                            subtitle: "軟體開發專案",
+                            fullDescription: "以鼓勵運動為主題的虛擬寵物軟體，結合運動與遊戲元素。",
+                            images: [
+                                "WA_image/7.png",
+                                "WA_image/7.png"
+                            ],
+                            sections: [
+                                {
+                                    title: "功能架構",
+                                    content: "具登入功能，使用者可以與虛擬寵物互動與聊天，在運動過程中獲得成就，藉此得到音樂碎片，碎片可串聯製作成一首專屬歌曲。"
+                                },
+                                {
+                                    title: "技術特色",
+                                    content: "Uinty平台開發，使用C#語言與連接ChatGPT，並結合音樂元素增強軟體體驗。本軟體與小組成員共同製作，此主題由我提出並在多個提案中通過，我主要負責負責設計寵物造型、協調工作及撰寫 Unity 與 ChatGPT 連結之程式。"
+                                },
+                            ],
+                            client: "N/A (課堂專案)",
+                            duration: "3個月",
+                            tools: ["Unity", "C#", "Adobe Illustrator"],
+                            year: "2023"
+                        }
+                    },
+                    {
+                        id: "website5",
+                        title: "結合人工智慧情緒分析應用之軟體",
+                        description: "結合人工智慧情緒分析應用之軟體，提供使用者情緒分析和建議。",
+                        tags: ["軟體開發","人工智慧", "情緒分析"],
+                        icon: "WA_image/8.png", 
+                        details: {
+                            subtitle: "軟體結合人工智慧情緒分析專案",
+                            fullDescription: "結合人工智慧情緒分析應用之軟體，提供使用者情緒分析和建議。",
+                            images: [
+                                "WA_image/8.png",
+                                "WA_image/9.png"
+                            ],
+                            sections: [
+                                {
+                                    title: "功能架構",
+                                    content: "面對常用訊息聊天的時代，很常不確定對方的情緒，這個軟體可以透過人工智慧分析對方的情緒，並提供建議。使用者可以輸入對話內容，軟體會分析情緒並給出相應的結果參考。"
+                                },
+                                {
+                                    title: "技術特色",
+                                    content: "利用Unity平台開發，使用C#語言實現互動介面，並連接人工智慧情緒分析KeyMoji API技術。本軟體與小組成員共同製作。"
+                                },
+                            ],
+                            client: "N/A (課堂專案)",
+                            duration: "2週",
+                            tools: ["Unity", "C#", "KeyMoji API"],
+                            year: "2024"
+                        }
+                    },
+                    {
+                        id: "website6",
+                        title: "AI輔助學習軟體",
+                        description: "結合人工智慧情緒分析模組，即時分析學生的情緒。",
+                        tags: ["軟體開發","人工智慧", "情緒分析"],
+                        icon: "WA_image/12.jpeg", 
+                        details: {
+                            subtitle: "AI輔助學習軟體開發專案",
+                            fullDescription: "結合人工智慧情緒分析模組，即時分析學生的情緒。",
+                            images: [
+                                "WA_image/11.jpeg",
+                                "WA_image/12.jpeg",
+                                "WA_image/13.jpeg",
+                                "WA_image/14.jpeg",
+                            ],
+                            sections: [
+                                {
+                                    title: "功能架構",
+                                    content: "本研究軟體將導入同理心回覆理論作為輸出原則，並利用ChatGPT以教師的角色回覆及解答學習者。其中用途選項分為回覆學生問題及學生抒發情緒功能。"
+                                },
+                                {
+                                    title: "技術特色",
+                                    content: "這是一套 AI 輔助學習軟體，結合人工智慧情緒分析模組 KeyMojiAPI、ChatGPT 與 Unity，即時分析學生的情緒，並以同理心理論為基礎提供相應的回應。"
+                                },
+                            ],
+                            client: "搭配大專生計畫開發",
+                            duration: "3個月",
+                            tools: ["Unity", "C#", "KeyMoji API"],
+                            year: "2025"
+                        }
+                    },
+                    {
+                        id: "portfolio-website",
+                        title: "噗啾&呼嚕作品集網站",
+                        description: "作品集網站，展現創意和技術能力的完美結合。",
+                        tags: ["作品集", "網頁"],
+                        icon: "WA_image/10.jpeg", 
+                    }
+                ]
+            },
+            game: {
+                title: "🎮 遊戲製作",
+                works: [
+                    {
+                        id: "puzzle-adventure",
+                        title: "結合議題的解謎遊戲",
+                        description: "探討家庭教育與兩性平權之遊戲設計",
+                        tags: ["Unity", "解謎","議題","日記系統","情緒分析"],
+                        icon: "G_image/4.png",
+                        details: {
+                            subtitle: "《家秘日記》解謎遊戲",
+                            fullDescription: "結合家庭教育與兩性平權議題之解謎遊戲",
+                            videoFile: "G_image/video/1.mp4", 
+                            images: [
+                               
+                            ],
+                            sections: [
+                                {
+                                    title: "謎題設計",
+                                    content: "遊戲中有許多須使用鑰匙解開與互動的環節，進而從中了解遊戲角色相關故事。"
+                                },
+                                {
+                                    title: "敘事手法",
+                                    content: "將文獻蒐集及親身經驗等等觀點融入故事設計，使玩家經過遊戲沉浸式體驗家中情境，從中思考如何應對家庭爭執與反思議題。"
+                                },
+                                {
+                                    title: "技術挑戰",
+                                    content: "此遊戲與小組成員共同製作，我主要負責遊戲程式撰寫。<br>製作過程中需將所有故事階段串接，加入存檔功能，且本遊戲有特別的日記系統，可讓玩家針對一個階段的體驗輸入感受文字，系統便將文字經由情緒分析應用判斷玩家情緒而影響遊戲內主角情緒值，最後影響到故事的結局走向。這些皆是開發此遊戲的重要挑戰。"
+                                }
+                            ],
+                            client: "Monimo",
+                            duration: "1年",
+                            tools: ["Unity", "C#"],
+                            year: "2024"
+                        }
+                    },
+                    {
+                        id: "platform-game",
+                        title: "2D卷軸跳躍遊戲",
+                        description: "像素風格的2D平台遊戲，結合經典玩法與現代設計理念。",
+                        tags: ["Unity", "2D卷軸"],
+                        icon: "G_image/1.jpg", 
+                        details: {
+                            subtitle: "《今天要吃什麼?》卷軸遊戲",
+                            fullDescription: "結合SDGs開發2D卷軸跳躍遊戲",
+                            images: [
+                                "G_image/1.jpg",
+                                "G_image/2.jpg",
+                                "G_image/3.jpg"
+                            ],
+                            sections: [
+                                {
+                                    title: "遊戲機制",
+                                    content: "採用經典的跳躍、收集，加入現代的關卡設計和進程系統，總共分為三關，分別是普通關、中等困難和魔王關。此作品我主要負責遊戲程式撰寫"
+                                },
+                                {
+                                    title: "視覺設計",
+                                    content: "使用像素藝術風格。"
+                                },
+                                {
+                                    title: "音效設計",
+                                    content: "創作了符合風格的可愛音樂。"
+                                }
+                            ],
+                            client: "N/A(課堂專案)",
+                            duration: "1週",
+                            tools: ["Unity","C#"],
+                            year: "2024"
+                        }
+                    },
+                ]
+            }
+        };
+
+        // DOM 元素
+        const modal = document.getElementById('portfolioModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const worksGrid = document.getElementById('worksGrid');
+        const closeBtn = document.querySelector('.close');
+        const planets = document.querySelectorAll('.planet');
+
+        // 詳細資料模態框元素
+        const detailModal = document.getElementById('detailModal');
+        const detailCloseBtn = document.querySelector('.detail-close');
+        const detailTitle = document.getElementById('detailTitle');
+        const detailSubtitle = document.getElementById('detailSubtitle');
+        const detailImage = document.getElementById('detailImage');
+        const detailMain = document.getElementById('detailMain');
+        const detailSidebar = document.getElementById('detailSidebar');
+
+        // 點擊星球顯示作品
+        planets.forEach(planet => {
+            planet.addEventListener('click', () => {
+                const category = planet.dataset.category;
+                const data = portfolioData[category];
+                
+                modalTitle.textContent = data.title;
+                
+                // 清空並重新生成模態框內容
+                worksGrid.innerHTML = '';
+                
+                // 移除現有的篩選區域（如果存在）
+                const existingFilterSection = document.querySelector('.filter-section');
+                if (existingFilterSection) {
+                    existingFilterSection.remove();
+                }
+                
+                // 如果是平面設計類別，添加篩選功能
+                if (category === 'graphic') {
+                    createFilterSection(data.works, category);
+                }
+                
+                // 如果是插畫創作類別，添加篩選功能
+                if (category === 'illustration') {
+                    createFilterSection(data.works, category);
+                }
+                
+                // 如果是網頁與APP開發類別，添加篩選功能
+                if (category === 'web') {
+                    createFilterSection(data.works, category);
+                }
+                
+                // 生成作品網格
+                generateWorksGrid(data.works, category);
+                
+                modal.style.display = 'block';
+            });
+        });
+
+        // 創建篩選區域
+        function createFilterSection(works, currentCategory) {
+            // 收集所有標籤
+            const allTags = new Set();
+            works.forEach(work => {
+                work.tags.forEach(tag => allTags.add(tag));
+            });
+            
+            // 創建篩選區域
+            const filterSection = document.createElement('div');
+            filterSection.className = 'filter-section';
+            filterSection.innerHTML = `
+                <div class="filter-label">🏷️ 依標籤篩選作品</div>
+                <div class="filter-tags">
+                    <span class="filter-tag show-all active" data-filter="all">全部顯示</span>
+                    ${Array.from(allTags).map(tag => 
+                        `<span class="filter-tag" data-filter="${tag}">${tag}</span>`
+                    ).join('')}
+                </div>
+            `;
+            
+            // 插入到作品網格之前
+            const modalContent = document.querySelector('.modal-content');
+            const worksGridContainer = document.getElementById('worksGrid');
+            modalContent.insertBefore(filterSection, worksGridContainer);
+            
+            // 添加篩選事件監聽器
+            const filterTags = filterSection.querySelectorAll('.filter-tag');
+            filterTags.forEach(tag => {
+                tag.addEventListener('click', () => {
+                    // 移除所有active狀態
+                    filterTags.forEach(t => t.classList.remove('active'));
+                    // 添加當前點擊的active狀態
+                    tag.classList.add('active');
+                    
+                    const filterValue = tag.dataset.filter;
+                    filterWorks(works, filterValue, currentCategory);
+                });
+            });
+        }
+
+        // 篩選作品
+        function filterWorks(works, filterValue, category) {
+            let filteredWorks = works;
+            
+            if (filterValue !== 'all') {
+                filteredWorks = works.filter(work => 
+                    work.tags.includes(filterValue)
+                );
+            }
+            
+            // 重新生成作品網格
+            generateWorksGrid(filteredWorks, category);
+        }
+
+        // 生成作品網格
+        function generateWorksGrid(works, category) {
+            // 清空現有內容
+            worksGrid.innerHTML = '';
+            
+            works.forEach(work => {
+                const workItem = document.createElement('div');
+                workItem.className = 'work-item';
+                workItem.dataset.workId = work.id;
+                workItem.dataset.category = category;
+                
+                workItem.innerHTML = `
+                    <div class="work-image"><img src="${work.icon}" alt="${work.title}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"></div>
+                    <h3 class="work-title">${work.title}</h3>
+                    <p class="work-description">${work.description}</p>
+                    <div class="work-tags">
+                        ${work.tags.map(tag => `<span class="work-tag">${tag}</span>`).join('')}
+                    </div>
+                `;
+                
+                // 添加點擊事件顯示詳細資料
+                workItem.addEventListener('click', () => {
+                    showWorkDetail(category, work.id);
+                });
+                
+                worksGrid.appendChild(workItem);
+            });
+        }
+
+        // 顯示作品詳細資料
+        function showWorkDetail(category, workId) {
+            const work = portfolioData[category].works.find(w => w.id === workId);
+            if (!work || !work.details) return;
+            
+            const details = work.details;
+            
+            // 設置標題和副標題
+            detailTitle.textContent = work.title;
+            detailSubtitle.textContent = details.subtitle;
+            
+            // 生成主要內容
+            detailMain.innerHTML = `
+                <p>${details.fullDescription}</p>
+                ${details.sections.map(section => `
+                    <h3>${section.title}</h3>
+                    <p>${section.content}</p>
+                `).join('')}
+            `;
+            
+            // 生成側邊欄信息
+            detailSidebar.innerHTML = `
+                <div class="detail-info-section">
+                    <h4>📅 專案時間</h4>
+                    <p>${details.duration} (${details.year})</p>
+                </div>
+                <div class="detail-info-section">
+                    <h4>👤 客戶</h4>
+                    <p>${details.client}</p>
+                </div>
+                <div class="detail-info-section">
+                    <h4>🛠️ 使用工具</h4>
+                    <div class="detail-tags">
+                        ${details.tools.map(tool => `<span class="detail-tag">${tool}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="detail-info-section">
+                    <h4>🏷️ 專案標籤</h4>
+                    <div class="detail-tags">
+                        ${work.tags.map(tag => `<span class="detail-tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // 隱藏作品列表模態框，顯示詳細資料模態框
+            modal.style.display = 'none';
+            detailModal.style.display = 'block';
+
+            // 初始化媒體內容（圖片輪播或影片）
+            if (details.videoFile) {
+                initLocalVideoContent(details, category);
+            } else if (details.video) {
+                initVideoContent(details, category);
+            } else {
+                initImageCarousel(details.images);
+            }
+        }
+
+        // 初始化影片內容
+        function initVideoContent(details, category) {
+            const detailImageContainer = document.getElementById('detailImage');
+            detailImageContainer.innerHTML = ''; // 清空現有內容
+            
+            // 創建影片容器
+            const videoContainer = document.createElement('div');
+            videoContainer.className = 'video-container';
+            videoContainer.style.cssText = `
+                position: relative;
+                width: 100%;
+                height: 0;
+                padding-bottom: 56.25%; /* 16:9 aspect ratio */
+                overflow: hidden;
+                border-radius: 18px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            `;
+            
+            // 加入影片 iframe
+            const videoWrapper = document.createElement('div');
+            let videoHTML = details.video;
+            
+            // 如果是網頁與APP開發類別，為 iframe 添加自動播放參數
+            if (category === 'web') {
+                // 處理 YouTube 或其他 iframe 影片的自動播放
+                if (videoHTML.includes('youtube.com/embed')) {
+                    videoHTML = videoHTML.replace(/src="([^"]*)"/, (match, url) => {
+                        const separator = url.includes('?') ? '&' : '?';
+                        return `src="${url}${separator}autoplay=1&mute=1"`;
+                    });
+                }
+                // 處理其他可能的 iframe 影片平台
+                else if (videoHTML.includes('vimeo.com')) {
+                    videoHTML = videoHTML.replace(/src="([^"]*)"/, (match, url) => {
+                        const separator = url.includes('?') ? '&' : '?';
+                        return `src="${url}${separator}autoplay=1&muted=1"`;
+                    });
+                }
+            }
+            
+            videoWrapper.innerHTML = videoHTML;
+            
+            // 調整 iframe 樣式使其響應式
+            const iframe = videoWrapper.querySelector('iframe');
+            if (iframe) {
+                iframe.style.cssText = `
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                    border-radius: 18px;
+                `;
+                
+                // 為網頁與APP開發類別添加額外的自動播放屬性
+                if (category === 'web') {
+                    iframe.setAttribute('allow', 'autoplay; encrypted-media');
+                }
+            }
+            
+            videoContainer.appendChild(videoWrapper);
+            detailImageContainer.appendChild(videoContainer);
+            
+            // 如果還有圖片，在影片下方顯示圖片輪播
+            if (details.images && details.images.length > 0) {
+                const imagesTitle = document.createElement('h3');
+                imagesTitle.textContent = '📸 專案圖片';
+                imagesTitle.style.cssText = `
+                    color: #b3e5fc;
+                    margin: 30px 0 15px 0;
+                    font-size: 1.4em;
+                    border-left: 4px solid #b3e5fc;
+                    padding-left: 15px;
+                    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+                `;
+                detailImageContainer.appendChild(imagesTitle);
+                
+                const imageGallery = document.createElement('div');
+                imageGallery.className = 'image-gallery';
+                imageGallery.id = 'imageGallery';
+                detailImageContainer.appendChild(imageGallery);
+                
+                initImageGallery(details.images, imageGallery);
+            }
+        }
+
+        // 初始化本地影片內容
+        function initLocalVideoContent(details, category) {
+            const detailImageContainer = document.getElementById('detailImage');
+            detailImageContainer.innerHTML = ''; // 清空現有內容
+            
+            // 創建影片容器
+            const videoContainer = document.createElement('div');
+            videoContainer.className = 'video-container';
+            videoContainer.style.cssText = `
+                position: relative;
+                width: 100%;
+                background: linear-gradient(135deg, #ff9a9e, #fecfef, #a8edea);
+                border-radius: 20px;
+                overflow: hidden;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                padding: 20px;
+            `;
+            
+            // 創建 HTML5 video 元素
+            const video = document.createElement('video');
+            video.style.cssText = `
+                width: 100%;
+                height: auto;
+                border-radius: 15px;
+                background: #000;
+                outline: none;
+            `;
+            video.controls = true;
+            video.preload = 'metadata';
+            
+            // 如果是網頁與APP開發類別，添加自動播放和靜音屬性
+            if (category === 'web') {
+                video.autoplay = true;
+                video.muted = true; // 現代瀏覽器要求自動播放的影片必須靜音
+                video.loop = true; // 可選：讓影片循環播放
+            }
+            
+            // 支援多種影片格式
+            const videoFormats = [
+                { src: details.videoFile, type: getVideoType(details.videoFile) }
+            ];
+            
+            videoFormats.forEach(format => {
+                const source = document.createElement('source');
+                source.src = format.src;
+                source.type = format.type;
+                video.appendChild(source);
+            });
+            
+            // 添加影片載入錯誤處理
+            video.addEventListener('error', function() {
+                const errorMsg = document.createElement('div');
+                errorMsg.innerHTML = `
+                    <div style="
+                        text-align: center;
+                        padding: 40px;
+                        color: rgba(255, 255, 255, 0.8);
+                        font-size: 1.1em;
+                    ">
+                        <div style="font-size: 3em; margin-bottom: 15px;">🎬</div>
+                        <p>影片載入中或檔案不存在</p>
+                        <p style="font-size: 0.9em; opacity: 0.7;">請確認影片檔案路徑：${details.videoFile}</p>
+                    </div>
+                `;
+                videoContainer.innerHTML = '';
+                videoContainer.appendChild(errorMsg);
+            });
+            
+            // 添加影片載入完成事件
+            video.addEventListener('loadedmetadata', function() {
+                console.log('影片載入完成:', details.videoFile);
+                
+                // 如果是網頁與APP開發類別且支援自動播放，嘗試播放
+                if (category === 'web') {
+                    video.play().catch(error => {
+                        console.log('自動播放失敗:', error);
+                        // 如果自動播放失敗，可以顯示提示訊息
+                    });
+                }
+            });
+            
+            videoContainer.appendChild(video);
+            detailImageContainer.appendChild(videoContainer);
+            
+            // 如果還有圖片，在影片下方顯示圖片輪播
+            if (details.images && details.images.length > 0) {
+                const imagesTitle = document.createElement('h3');
+                imagesTitle.textContent = '📸 專案圖片';
+                imagesTitle.style.cssText = `
+                    color: #b3e5fc;
+                    margin: 30px 0 15px 0;
+                    font-size: 1.4em;
+                    border-left: 4px solid #b3e5fc;
+                    padding-left: 15px;
+                    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+                `;
+                detailImageContainer.appendChild(imagesTitle);
+                
+                const imageGallery = document.createElement('div');
+                imageGallery.className = 'image-gallery';
+                imageGallery.id = 'imageGallery';
+                detailImageContainer.appendChild(imageGallery);
+                
+                initImageGallery(details.images, imageGallery);
+            }
+        }
+
+        // 根據檔案副檔名判斷影片類型
+        function getVideoType(filename) {
+            const extension = filename.split('.').pop().toLowerCase();
+            switch (extension) {
+                case 'mp4':
+                    return 'video/mp4';
+                case 'mov':
+                    return 'video/quicktime';
+                case 'webm':
+                    return 'video/webm';
+                case 'ogg':
+                    return 'video/ogg';
+                case 'avi':
+                    return 'video/x-msvideo';
+                default:
+                    return 'video/mp4';
+            }
+        }
+
+        // 初始化圖片輪播
+        function initImageCarousel(images) {
+            const detailImageContainer = document.getElementById('detailImage');
+            detailImageContainer.innerHTML = ''; // 清空現有內容
+            
+            if (!images || images.length === 0) {
+                detailImageContainer.innerHTML = '<p style="text-align: center; color: rgba(255, 255, 255, 0.6);">暫無圖片</p>';
+                return;
+            }
+            
+            if (images.length === 1) {
+                // 單張圖片顯示
+                const singleImage = document.createElement('img');
+                singleImage.src = images[0];
+                singleImage.className = 'detail-image-single';
+                singleImage.alt = '作品圖片';
+                detailImageContainer.appendChild(singleImage);
+                return;
+            }
+            
+            // 多張圖片輪播
+            const carouselContainer = document.createElement('div');
+            carouselContainer.className = 'carousel-container';
+            carouselContainer.style.cssText = `
+                position: relative;
+                width: 100%;
+                background: linear-gradient(135deg, #ff9a9e, #fecfef, #a8edea);
+                border-radius: 20px;
+                overflow: hidden;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            `;
+            
+            const carouselInner = document.createElement('div');
+            carouselInner.className = 'carousel-inner';
+            
+            // 創建圖片項目
+            images.forEach((imageSrc, index) => {
+                const carouselItem = document.createElement('div');
+                carouselItem.className = `carousel-item ${index === 0 ? 'active' : ''}`;
+                
+                const img = document.createElement('img');
+                img.src = imageSrc;
+                img.alt = `作品圖片 ${index + 1}`;
+                img.style.cssText = `
+                    width: 100%;
+                    height: auto;
+                    max-height: 600px;
+                    object-fit: contain;
+                    border-radius: 18px;
+                `;
+                
+                carouselItem.appendChild(img);
+                carouselInner.appendChild(carouselItem);
+            });
+            
+            // 創建控制按鈕
+            const prevButton = document.createElement('button');
+            prevButton.className = 'carousel-control-prev';
+            prevButton.setAttribute('aria-label', '上一張');
+            
+            const nextButton = document.createElement('button');
+            nextButton.className = 'carousel-control-next';
+            nextButton.setAttribute('aria-label', '下一張');
+            
+            // 輪播控制邏輯
+            let currentIndex = 0;
+            const carouselItems = carouselInner.querySelectorAll('.carousel-item');
+            
+            function showSlide(index) {
+                carouselItems.forEach((item, i) => {
+                    item.classList.toggle('active', i === index);
+                });
+            }
+            
+            prevButton.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                showSlide(currentIndex);
+            });
+            
+            nextButton.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % images.length;
+                showSlide(currentIndex);
+            });
+            
+            // 自動輪播（可選）
+            setInterval(() => {
+                currentIndex = (currentIndex + 1) % images.length;
+                showSlide(currentIndex);
+            }, 5000); // 5秒自動切換
+            
+            carouselContainer.appendChild(carouselInner);
+            carouselContainer.appendChild(prevButton);
+            carouselContainer.appendChild(nextButton);
+            detailImageContainer.appendChild(carouselContainer);
+        }
+
+        // 初始化圖片畫廊（用於影片下方的圖片顯示）
+        function initImageGallery(images, container) {
+            if (!images || images.length === 0 || !container) return;
+            
+            container.innerHTML = ''; // 清空現有內容
+            
+            container.style.cssText = `
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+                margin-top: 20px;
+            `;
+            
+            images.forEach((imageSrc, index) => {
+                const imageItem = document.createElement('div');
+                imageItem.style.cssText = `
+                    position: relative;
+                    border-radius: 15px;
+                    overflow: hidden;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    background: rgba(255, 255, 255, 0.1);
+                    backdrop-filter: blur(10px);
+                    border: 2px solid rgba(255, 255, 255, 0.2);
+                `;
+                
+                const img = document.createElement('img');
+                img.src = imageSrc;
+                img.alt = `專案圖片 ${index + 1}`;
+                img.style.cssText = `
+                    width: 100%;
+                    height: 150px;
+                    object-fit: cover;
+                    transition: transform 0.3s ease;
+                `;
+                
+                // 點擊放大功能
+                imageItem.addEventListener('click', () => {
+                    showImageLightbox(imageSrc);
+                });
+                
+                // 懸停效果
+                imageItem.addEventListener('mouseenter', () => {
+                    imageItem.style.transform = 'scale(1.05)';
+                    imageItem.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.3)';
+                    img.style.transform = 'scale(1.1)';
+                });
+                
+                imageItem.addEventListener('mouseleave', () => {
+                    imageItem.style.transform = 'scale(1)';
+                    imageItem.style.boxShadow = 'none';
+                    img.style.transform = 'scale(1)';
+                });
+                
+                imageItem.appendChild(img);
+                container.appendChild(imageItem);
+            });
+        }
+
+        // 圖片燈箱功能
+        function showImageLightbox(imageSrc) {
+            const lightbox = document.createElement('div');
+            lightbox.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                z-index: 2000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                backdrop-filter: blur(10px);
+                cursor: pointer;
+            `;
+            
+            const img = document.createElement('img');
+            img.src = imageSrc;
+            img.style.cssText = `
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+                border-radius: 10px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            `;
+            
+            const closeButton = document.createElement('button');
+            closeButton.innerHTML = '×';
+            closeButton.style.cssText = `
+                position: absolute;
+                top: 20px;
+                right: 30px;
+                background: rgba(255, 255, 255, 0.2);
+                border: none;
+                color: white;
+                font-size: 40px;
+                cursor: pointer;
+                border-radius: 50%;
+                width: 60px;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            `;
+            
+            closeButton.addEventListener('mouseenter', () => {
+                closeButton.style.background = 'rgba(255, 255, 255, 0.3)';
+                closeButton.style.transform = 'scale(1.1)';
+            });
+            
+            closeButton.addEventListener('mouseleave', () => {
+                closeButton.style.background = 'rgba(255, 255, 255, 0.2)';
+                closeButton.style.transform = 'scale(1)';
+            });
+            
+            // 關閉燈箱
+            function closeLightbox() {
+                document.body.removeChild(lightbox);
+            }
+            
+            closeButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeLightbox();
+            });
+            
+            lightbox.addEventListener('click', closeLightbox);
+            
+            // ESC鍵關閉
+            const handleKeyPress = (e) => {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                    document.removeEventListener('keydown', handleKeyPress);
+                }
+            };
+            document.addEventListener('keydown', handleKeyPress);
+            
+            lightbox.appendChild(img);
+            lightbox.appendChild(closeButton);
+            document.body.appendChild(lightbox);
+        }
+
+        // 關閉模態框
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        detailCloseBtn.addEventListener('click', () => {
+            detailModal.style.display = 'none';
+            modal.style.display = 'block'; // 重新顯示作品列表模態框
+        });
+
+        // 點擊模態框外部關閉
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+            if (e.target === detailModal) {
+                detailModal.style.display = 'none';
+                modal.style.display = 'block'; // 重新顯示作品列表模態框
+            }
+        });
+
+        // 添加星球浮動動畫
+        planets.forEach((planet, index) => {
+            planet.style.animation = `float 3s ease-in-out infinite ${index * 0.5}s`;
+        });
+    </script>
 </body>
 </html>
