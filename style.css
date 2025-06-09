@@ -266,44 +266,6 @@ main {
     transform: translateX(20px);
 }
 
-/* 流星效果 */
-.meteor {
-    position: fixed;
-    width: 2px;
-    height: 2px;
-    background: white;
-    border-radius: 50%;
-    z-index: -1;
-    opacity: 0;
-}
-
-.meteor::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 20px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, white, transparent);
-    transform-origin: left center;
-    border-radius: 1px;
-}
-
-.meteor-animation {
-    animation: meteor-fall 3s linear forwards;
-}
-
-@keyframes meteor-fall {
-    0% {
-        opacity: 1;
-        transform: translateX(-100px) translateY(-100px) rotate(45deg);
-    }
-    100% {
-        opacity: 0;
-        transform: translateX(100vw) translateY(100vh) rotate(45deg);
-    }
-}
-
 /* 性能優化 */
 * {
     box-sizing: border-box;
