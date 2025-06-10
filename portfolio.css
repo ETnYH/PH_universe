@@ -306,80 +306,14 @@ body::before {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 182, 193, 0.2);
     z-index: 2;
-    animation: planetBounce 4s ease-in-out infinite;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    background-size: cover;
+    border: 4px solid rgba(255, 255, 255, 0.4);
+    background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
     overflow: hidden;
-}
-
-/* 每個星球使用不同的圖片背景 */
-.planet-graphic {
-    background-image: url('image/left.png');
-    animation-delay: 0s;
-}
-
-.planet-illustration {
-    background-image: url('image/right.png');
-    animation-delay: 1s;
-}
-
-.planet-web {
-    background-image: url('image/home.png');
-    animation-delay: 2s;
-}
-
-.planet-game {
-    background-image: url('image/spaceship.png');
-    animation-delay: 3s;
-}
-
-/* 添加圖片覆蓋層以改善視覺效果 */
-.planet::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.1) 100%);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* 粒子軌道效果 */
-.planet::after {
-    content: '';
-    position: absolute;
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    border: 1px dotted rgba(255, 255, 255, 0.2);
-    animation: particleOrbit 18s linear infinite reverse;
-    pointer-events: none;
-    z-index: 0;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-@keyframes planetBounce {
-    0%, 100% { 
-        transform: translateY(0px) scale(1); 
-    }
-    25% { 
-        transform: translateY(-10px) scale(1.02); 
-    }
-    50% { 
-        transform: translateY(-18px) scale(1.05); 
-    }
-    75% { 
-        transform: translateY(-10px) scale(1.02); 
-    }
+    /* 移除了原本的 animation: planetBounce 4s ease-in-out infinite; */
 }
 
 .planet:hover {
@@ -389,30 +323,354 @@ body::before {
     border-color: rgba(255, 255, 255, 0.6);
 }
 
+/* 為每个星球添加夢幻的發光效果和更輕微的飄動 */
+.planet-graphic {
+    background: radial-gradient(circle at 30% 30%, #ff9a9e, #fecfef, #e6b3ff, #c8a2c8);
+    border: none;
+    box-shadow: 0 0 20px rgba(255, 154, 158, 0.3), 0 0 40px rgba(255, 154, 158, 0.15), inset 0 0 30px rgba(255, 255, 255, 0.1);
+    position: relative;
+    animation: planetFloat 12s ease-in-out infinite, planetSparkle 8s ease-in-out infinite alternate;
+    animation-delay: 0s, 0.5s;
+}
+
+.planet-illustration {
+    background: radial-gradient(circle at 35% 25%, #a8edea, #b3e5fc, #e0b3ff, #87ceeb);
+    border: none;
+    box-shadow: 0 0 20px rgba(168, 237, 234, 0.3), 0 0 40px rgba(168, 237, 234, 0.15), inset 0 0 30px rgba(255, 255, 255, 0.1);
+    animation: planetFloat 14s ease-in-out infinite, planetSparkle 8s ease-in-out infinite alternate;
+    animation-delay: 2s, 2.5s;
+}
+
+.planet-web {
+    background: radial-gradient(circle at 40% 30%, #fed6e3, #ffb347, #ffa500, #ff9a9e);
+    border: none;
+    box-shadow: 0 0 20px rgba(255, 179, 71, 0.3), 0 0 40px rgba(255, 179, 71, 0.15), inset 0 0 30px rgba(255, 255, 255, 0.1);
+    animation: planetFloat 16s ease-in-out infinite, planetSparkle 8s ease-in-out infinite alternate;
+    animation-delay: 4s, 4.5s;
+}
+
+.planet-game {
+    background: radial-gradient(circle at 30% 40%, #dda0dd, #da70d6, #ba55d3, #9370db);
+    border: none;
+    box-shadow: 0 0 20px rgba(221, 160, 221, 0.3), 0 0 40px rgba(221, 160, 221, 0.15), inset 0 0 30px rgba(255, 255, 255, 0.1);
+    animation: planetFloat 10s ease-in-out infinite, planetSparkle 8s ease-in-out infinite alternate;
+    animation-delay: 6s, 6.5s;
+}
+
+/* 宇宙飄動動畫 - 更輕微的3D飄動效果 */
+@keyframes planetFloat {
+    0% { 
+        transform: translateY(0px) translateX(0px) rotateZ(0deg) scale(1);
+        filter: brightness(1) saturate(1);
+    }
+    20% { 
+        transform: translateY(-8px) translateX(6px) rotateZ(1deg) scale(1.01);
+        filter: brightness(1.05) saturate(1.1);
+    }
+    40% { 
+        transform: translateY(-15px) translateX(-3px) rotateZ(-1deg) scale(1.02);
+        filter: brightness(1.08) saturate(1.15);
+    }
+    60% { 
+        transform: translateY(-20px) translateX(8px) rotateZ(2deg) scale(1.015);
+        filter: brightness(1.1) saturate(1.05);
+    }
+    80% { 
+        transform: translateY(-10px) translateX(-4px) rotateZ(-0.5deg) scale(1.005);
+        filter: brightness(1.03) saturate(1.2);
+    }
+    100% { 
+        transform: translateY(0px) translateX(0px) rotateZ(0deg) scale(1);
+        filter: brightness(1) saturate(1);
+    }
+}
+
+/* 星球閃爍效果 - 更柔和的發光 */
+@keyframes planetSparkle {
+    0% { 
+        box-shadow: 0 0 20px rgba(255, 154, 158, 0.3), 0 0 40px rgba(255, 154, 158, 0.15), inset 0 0 30px rgba(255, 255, 255, 0.1);
+    }
+    25% {
+        box-shadow: 0 0 25px rgba(255, 154, 158, 0.4), 0 0 50px rgba(255, 154, 158, 0.2), inset 0 0 40px rgba(255, 255, 255, 0.15);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(255, 154, 158, 0.5), 0 0 60px rgba(255, 154, 158, 0.25), inset 0 0 50px rgba(255, 255, 255, 0.2);
+    }
+    75% {
+        box-shadow: 0 0 25px rgba(255, 154, 158, 0.4), 0 0 50px rgba(255, 154, 158, 0.2), inset 0 0 40px rgba(255, 255, 255, 0.15);
+    }
+    100% { 
+        box-shadow: 0 0 20px rgba(255, 154, 158, 0.3), 0 0 40px rgba(255, 154, 158, 0.15), inset 0 0 30px rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* 每個星球的before和after效果保持不變，但調整顏色對應 */
+.planet-graphic::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.9) 3px, transparent 4px),
+        radial-gradient(circle at 65% 35%, rgba(255, 255, 255, 0.7) 2px, transparent 3px),
+        radial-gradient(circle at 80% 70px, rgba(255, 255, 255, 0.8) 2px, transparent 3px),
+        radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.6) 1px, transparent 2px),
+        radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.5) 1px, transparent 2px);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.planet-graphic::after {
+    content: '';
+    position: absolute;
+    top: -25px;
+    left: -25px;
+    right: -25px;
+    bottom: -25px;
+    border: 3px solid rgba(255, 182, 193, 0.4);
+    border-radius: 50%;
+    border-style: dashed;
+    animation: planetRing 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.planet-illustration::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: 
+        radial-gradient(circle at 25% 30%, rgba(255, 255, 255, 0.9) 3px, transparent 4px),
+        radial-gradient(circle at 70% 25%, rgba(255, 255, 255, 0.7) 2px, transparent 3px),
+        radial-gradient(circle at 85% 60%, rgba(255, 255, 255, 0.8) 2px, transparent 3px),
+        radial-gradient(circle at 30% 80%, rgba(255, 255, 255, 0.6) 1px, transparent 2px),
+        radial-gradient(circle at 15% 65%, rgba(255, 255, 255, 0.5) 1px, transparent 2px);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.planet-illustration::after {
+    content: '';
+    position: absolute;
+    top: -30px;
+    left: -30px;
+    right: -30px;
+    bottom: -30px;
+    border: 2px solid rgba(173, 216, 230, 0.5);
+    border-radius: 50%;
+    border-style: solid;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    animation: planetRing 15s linear infinite reverse;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.planet-web::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: 
+        radial-gradient(circle at 30% 35%, rgba(255, 255, 255, 0.9) 3px, transparent 4px),
+        radial-gradient(circle at 75% 30%, rgba(255, 255, 255, 0.7) 2px, transparent 3px),
+        radial-gradient(circle at 80% 75%, rgba(255, 255, 255, 0.8) 2px, transparent 3px),
+        radial-gradient(circle at 20% 70%, rgba(255, 255, 255, 0.6) 1px, transparent 2px),
+        radial-gradient(circle at 60% 15%, rgba(255, 255, 255, 0.5) 1px, transparent 2px);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.planet-web::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    border: 4px solid rgba(255, 218, 185, 0.4);
+    border-radius: 50%;
+    border-style: dotted;
+    animation: planetRing 25s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.planet-game::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: 
+        radial-gradient(circle at 35% 20%, rgba(255, 255, 255, 0.9) 3px, transparent 4px),
+        radial-gradient(circle at 65% 35%, rgba(255, 255, 255, 0.7) 2px, transparent 3px),
+        radial-gradient(circle at 75% 70%, rgba(255, 255, 255, 0.8) 2px, transparent 3px),
+        radial-gradient(circle at 20% 75%, rgba(255, 255, 255, 0.6) 1px, transparent 2px),
+        radial-gradient(circle at 80% 25%, rgba(255, 255, 255, 0.5) 1px, transparent 2px);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.planet-game::after {
+    content: '';
+    position: absolute;
+    top: -35px;
+    left: -35px;
+    right: -35px;
+    bottom: -35px;
+    border: 3px solid rgba(221, 160, 221, 0.5);
+    border-radius: 50%;
+    border-style: solid;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    animation: planetRing 18s linear infinite reverse;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes planetRing {
+    0% { 
+        transform: rotate(0deg); 
+        opacity: 0.3;
+    }
+    50% { 
+        opacity: 0.8;
+    }
+    100% { 
+        transform: rotate(360deg); 
+        opacity: 0.3;
+    }
+}
+
 /* 移除原本的星球圖標樣式，改為文字標題 */
 .planet-icon {
     display: none;
 }
 
 .planet-title {
-    font-size: 1.1em;
-    font-weight: 600;
+    font-size: 1.0em;
+    font-weight: 700;
     color: rgba(255, 255, 255, 0.95);
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.6);
+    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 0, 0, 0.6);
     text-align: center;
-    letter-spacing: 0.5px;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 8px 12px;
-    border-radius: 20px;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    z-index: 2;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, rgba(255, 182, 193, 0.4), rgba(173, 216, 230, 0.4));
+    padding: 12px 16px;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    z-index: 3;
     position: relative;
+    box-shadow: 0 8px 20px rgba(255, 182, 193, 0.3), inset 0 2px 10px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
 }
 
-@keyframes particleOrbit {
-    from { transform: translate(-50%, -50%) rotate(0deg); opacity: 0.2; }
-    to { transform: translate(-50%, -50%) rotate(360deg); opacity: 0.1; }
+@keyframes planetBounce {
+    0% { 
+        transform: translateY(0px) translateX(0px) scale(1) rotate(0deg); 
+    }
+    25% { 
+        transform: translateY(-15px) translateX(8px) scale(1.02) rotate(2deg); 
+    }
+    50% { 
+        transform: translateY(-25px) translateX(-5px) scale(1.05) rotate(-1deg); 
+    }
+    75% { 
+        transform: translateY(-12px) translateX(-8px) scale(1.03) rotate(1deg); 
+    }
+    100% { 
+        transform: translateY(0px) translateX(0px) scale(1) rotate(0deg); 
+    }
+}
+
+/* 粒子軌道效果 */
+.planet::after {
+    display: none;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    body {
+        font-family: 'Arial', sans-serif;
+    }
+    
+    .container {
+        flex-direction: column;
+    }
+    
+    .profile-section {
+        width: 100%;
+        height: auto;
+        max-height: 45vh;
+        border-radius: 0 0 25px 25px;
+        border-right: none;
+        border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .portfolio-section {
+        height: 55vh;
+        padding: 30px 20px;
+    }
+    
+    .planets-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+        max-width: 400px;
+        margin: 30px auto;
+    }
+    
+    .planet {
+        width: 140px;
+        height: 140px;
+    }
+    
+    .planet-icon {
+        font-size: 2.5em;
+    }
+    
+    .planet-title {
+        font-size: 0.95em;
+    }
+    
+    .detail-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .detail-modal-content {
+        padding: 25px;
+        width: 98%;
+        height: 98%;
+        margin: 1% auto;
+    }
+    
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .carousel-control-prev {
+        left: 15px;
+    }
+    
+    .carousel-control-next {
+        right: 15px;
+    }
 }
 
 /* 模態框樣式優化 */
@@ -693,6 +951,72 @@ body::before {
     border-radius: 18px;
 }
 
+/* 標籤篩選區域樣式 */
+.filter-section {
+    margin-bottom: 25px;
+    padding: 25px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.filter-label {
+    color: #b3e5fc;
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filter-tag {
+    background: linear-gradient(45deg, rgba(179, 229, 252, 0.3), rgba(255, 179, 217, 0.3));
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 25px;
+    font-size: 0.9em;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.filter-tag:hover {
+    background: linear-gradient(45deg, rgba(179, 229, 252, 0.5), rgba(255, 179, 217, 0.5));
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(179, 229, 252, 0.3);
+}
+
+.filter-tag.active {
+    background: linear-gradient(45deg, #b3e5fc, #ffb3d9);
+    color: #333;
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 8px 25px rgba(179, 229, 252, 0.4);
+    font-weight: 600;
+}
+
+.filter-tag.show-all {
+    background: linear-gradient(45deg, rgba(168, 237, 234, 0.3), rgba(254, 214, 227, 0.3));
+}
+
+.filter-tag.show-all:hover {
+    background: linear-gradient(45deg, rgba(168, 237, 234, 0.5), rgba(254, 214, 227, 0.5));
+}
+
+.filter-tag.show-all.active {
+    background: linear-gradient(45deg, #a8edea, #fed6e3);
+    color: #333;
+}
+
+/* 輪播樣式和詳細內容樣式 */
 .carousel-inner {
     position: relative;
     width: 100%;
@@ -865,72 +1189,6 @@ body::before {
     box-shadow: 0 5px 10px rgba(179, 229, 252, 0.2);
 }
 
-/* 標籤篩選區域樣式 */
-.filter-section {
-    margin-bottom: 25px;
-    padding: 25px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.05));
-    backdrop-filter: blur(15px);
-    border-radius: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.15);
-}
-
-.filter-label {
-    color: #b3e5fc;
-    font-size: 1.1em;
-    font-weight: 600;
-    margin-bottom: 15px;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.filter-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.filter-tag {
-    background: linear-gradient(45deg, rgba(179, 229, 252, 0.3), rgba(255, 179, 217, 0.3));
-    color: #fff;
-    padding: 10px 18px;
-    border-radius: 25px;
-    font-size: 0.9em;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    user-select: none;
-    font-weight: 500;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.filter-tag:hover {
-    background: linear-gradient(45deg, rgba(179, 229, 252, 0.5), rgba(255, 179, 217, 0.5));
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 20px rgba(179, 229, 252, 0.3);
-}
-
-.filter-tag.active {
-    background: linear-gradient(45deg, #b3e5fc, #ffb3d9);
-    color: #333;
-    border-color: rgba(255, 255, 255, 0.6);
-    box-shadow: 0 8px 25px rgba(179, 229, 252, 0.4);
-    font-weight: 600;
-}
-
-.filter-tag.show-all {
-    background: linear-gradient(45deg, rgba(168, 237, 234, 0.3), rgba(254, 214, 227, 0.3));
-}
-
-.filter-tag.show-all:hover {
-    background: linear-gradient(45deg, rgba(168, 237, 234, 0.5), rgba(254, 214, 227, 0.5));
-}
-
-.filter-tag.show-all.active {
-    background: linear-gradient(45deg, #a8edea, #fed6e3);
-    color: #333;
-}
-
-/* 移除重複的輪播樣式定義 */
 .visually-hidden {
     position: absolute !important;
     width: 1px !important;
@@ -941,78 +1199,6 @@ body::before {
     clip: rect(0, 0, 0, 0) !important;
     white-space: nowrap !important;
     border: 0 !important;
-}
-
-/* 響應式設計 */
-@media (max-width: 768px) {
-    body {
-        font-family: 'Arial', sans-serif;
-    }
-    
-    .container {
-        flex-direction: column;
-    }
-    
-    .profile-section {
-        width: 100%;
-        height: auto;
-        max-height: 45vh;
-        border-radius: 0 0 25px 25px;
-        border-right: none;
-        border-bottom: 3px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .portfolio-section {
-        height: 55vh;
-        padding: 30px 20px;
-    }
-    
-    .planets-container {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 30px;
-        max-width: 400px;
-        margin: 30px auto;
-    }
-    
-    .planet {
-        width: 140px;
-        height: 140px;
-    }
-    
-    .planet-icon {
-        font-size: 2.5em;
-    }
-    
-    .planet-title {
-        font-size: 0.95em;
-    }
-    
-    .detail-content {
-        grid-template-columns: 1fr;
-        gap: 30px;
-    }
-    
-    .detail-modal-content {
-        padding: 25px;
-        width: 98%;
-        height: 98%;
-        margin: 1% auto;
-    }
-    
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
-    }
-    
-    .carousel-control-prev {
-        left: 15px;
-    }
-    
-    .carousel-control-next {
-        right: 15px;
-    }
 }
 
 /* 增強可愛的流星動畫 */
