@@ -1322,7 +1322,6 @@ body::before {
     font-size: 0.9em;
     line-height: 1.5;
     margin: 0;
-    font-style: italic;
 }
 
 /* 為不同類型添加不同的節點顏色 */
@@ -1439,4 +1438,140 @@ body::before {
     margin: 0;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     font-weight: 600;
+}
+
+/* 聯絡資訊區域樣式 */
+.contact-info {
+    margin-top: 25px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(15px);
+    padding: 25px;
+    border-radius: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.contact-info h3 {
+    color: #b3e5fc;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    border-left: 4px solid #b3e5fc;
+    padding-left: 15px;
+}
+
+.contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.contact-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 18px;
+    background: linear-gradient(45deg, rgba(179, 229, 252, 0.2), rgba(255, 179, 217, 0.2));
+    border-radius: 15px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-link::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+    opacity: 0;
+}
+
+.contact-link:hover {
+    background: linear-gradient(45deg, rgba(179, 229, 252, 0.4), rgba(255, 179, 217, 0.4));
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(179, 229, 252, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.contact-link:hover::before {
+    opacity: 1;
+    transform: rotate(45deg) translate(50%, 50%);
+}
+
+.contact-icon {
+    font-size: 1.4em;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(45deg, rgba(255, 154, 158, 0.3), rgba(254, 207, 239, 0.3));
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.contact-link:hover .contact-icon {
+    background: linear-gradient(45deg, rgba(255, 154, 158, 0.6), rgba(254, 207, 239, 0.6));
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 5px 15px rgba(255, 154, 158, 0.3);
+}
+
+.contact-text {
+    font-size: 1em;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    flex: 1;
+}
+
+/* 添加可愛的裝飾元素 */
+.contact-info::after {
+    content: '💌';
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5em;
+    opacity: 0.3;
+    animation: float 3s ease-in-out infinite;
+}
+
+/* 響應式設計調整 */
+@media (max-width: 768px) {
+    .contact-info {
+        padding: 20px 15px;
+    }
+    
+    .contact-links {
+        gap: 12px;
+    }
+    
+    .contact-link {
+        padding: 12px 15px;
+    }
+    
+    .contact-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 1.2em;
+    }
+    
+    .contact-text {
+        font-size: 0.9em;
+    }
+    
+    .contact-info::after {
+        font-size: 1.2em;
+        top: 12px;
+        right: 15px;
+    }
 }
