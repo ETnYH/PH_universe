@@ -1189,57 +1189,254 @@ body::before {
     box-shadow: 0 5px 10px rgba(179, 229, 252, 0.2);
 }
 
-.visually-hidden {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
+/* 學歷和工作經歷區域樣式 - 改進佈局 */
+.education,
+.experience {
+    margin-top: 25px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(15px);
+    padding: 25px;
+    border-radius: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
-/* 增強可愛的流星動畫 */
-.shooting-star {
-    position: fixed;
-    width: 6px;
-    height: 6px;
-    background: linear-gradient(45deg, #fff, #ffb3d9, #b3e5fc);
-    border-radius: 50%;
-    box-shadow: 0 0 10px #ffb3d9, 0 0 20px #ffb3d9, 0 0 30px #b3e5fc;
-    animation: shootingCute 4s linear;
-    pointer-events: none;
-    z-index: 1;
+.education h3,
+.experience h3 {
+    color: #b3e5fc;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    border-left: 4px solid #b3e5fc;
+    padding-left: 15px;
 }
 
-@keyframes shootingCute {
-    0% {
-        transform: translateX(0) translateY(0) rotate(0deg);
-        opacity: 1;
-        filter: hue-rotate(0deg);
-    }
-    70% {
-        opacity: 1;
-        filter: hue-rotate(180deg);
-    }
-    100% {
-        transform: translateX(400px) translateY(400px) rotate(360deg);
-        opacity: 0;
-        filter: hue-rotate(360deg);
-    }
-}
-
-.shooting-star::before {
+/* 時間軸樣式 - 調整位置 */
+.education::before,
+.experience::before {
     content: '';
     position: absolute;
-    top: 0;
+    left: 25px;
+    top: 60px;
+    bottom: 20px;
+    width: 3px;
+    background: linear-gradient(180deg, 
+        rgba(179, 229, 252, 0.8) 0%, 
+        rgba(255, 179, 217, 0.6) 50%, 
+        rgba(168, 237, 234, 0.4) 100%);
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(179, 229, 252, 0.3);
+}
+
+.education-item,
+.experience-item {
+    display: block;
+    margin-bottom: 25px;
+    position: relative;
+    padding-left: 40px;
+    transition: all 0.3s ease;
+}
+
+.education-item:last-child,
+.experience-item:last-child {
+    margin-bottom: 0;
+}
+
+.education-item:hover,
+.experience-item:hover {
+    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 15px 15px 15px 40px;
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+/* 時間軸節點 - 調整位置 */
+.education-item::before,
+.experience-item::before {
+    content: '';
+    position: absolute;
+    left: -25px;
+    top: 8px;
+    width: 14px;
+    height: 14px;
+    background: linear-gradient(45deg, #ff9a9e, #fecfef);
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(255, 154, 158, 0.5);
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.education-item:hover::before,
+.experience-item:hover::before {
+    transform: scale(1.3);
+    box-shadow: 0 0 20px rgba(255, 154, 158, 0.8);
+}
+
+.education-year,
+.experience-year {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #ffb3d9;
+    background: linear-gradient(45deg, rgba(255, 179, 217, 0.2), rgba(179, 229, 252, 0.2));
+    padding: 6px 10px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 10px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    display: inline-block;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.education-item:hover .education-year,
+.experience-item:hover .experience-year {
+    background: linear-gradient(45deg, rgba(255, 179, 217, 0.4), rgba(179, 229, 252, 0.4));
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(255, 179, 217, 0.2);
+}
+
+.education-details,
+.experience-details {
+    margin-top: 5px;
+}
+
+.education-details h4,
+.experience-details h4 {
+    color: #fff;
+    font-size: 1.05em;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    line-height: 1.4;
+}
+
+.education-details p,
+.experience-details p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9em;
+    line-height: 1.5;
+    margin: 0;
+    font-style: italic;
+}
+
+/* 為不同類型添加不同的節點顏色 */
+.education-item:nth-child(odd)::before {
+    background: linear-gradient(45deg, #a8edea, #b3e5fc);
+}
+
+.experience-item:nth-child(odd)::before {
+    background: linear-gradient(45deg, #fed6e3, #ffb3d9);
+}
+
+/* 添加可愛的裝飾元素 */
+.education::after {
+    content: '🎓';
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5em;
+    opacity: 0.3;
+    animation: float 3s ease-in-out infinite;
+}
+
+.experience::after {
+    content: '💼';
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5em;
+    opacity: 0.3;
+    animation: float 3s ease-in-out infinite 1s;
+}
+
+@keyframes float {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.3;
+    }
+    50% { 
+        transform: translateY(-5px) rotate(5deg);
+        opacity: 0.6;
+    }
+}
+
+/* 響應式設計調整 */
+@media (max-width: 768px) {
+    .education,
+    .experience {
+        padding: 20px 15px;
+    }
+    
+    .education::before,
+    .experience::before {
+        left: 20px;
+    }
+    
+    .education-item,
+    .experience-item {
+        padding-left: 35px;
+    }
+    
+    .education-item::before,
+    .experience-item::before {
+        left: -20px;
+        top: 5px;
+    }
+    
+    .education-year,
+    .experience-year {
+        font-size: 0.8em;
+        padding: 5px 8px;
+        margin-bottom: 8px;
+    }
+    
+    .education-details h4,
+    .experience-details h4 {
+        font-size: 1em;
+    }
+    
+    .education-details p,
+    .experience-details p {
+        font-size: 0.85em;
+    }
+    
+    .education::after,
+    .experience::after {
+        font-size: 1.2em;
+        top: 12px;
+        right: 15px;
+    }
+}
+
+/* 區塊標題樣式統一 */
+.section-title {
+    margin: 30px 0 20px 0;
+    padding: 15px 0 10px 0;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
     left: 0;
-    width: 120px;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, #ffb3d9, #b3e5fc, transparent);
-    transform: translateX(-120px) rotate(45deg);
-    transform-origin: right center;
-    filter: blur(1px);
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(90deg, #b3e5fc, #ffb3d9);
+    border-radius: 1px;
+}
+
+.section-title h3 {
+    color: #b3e5fc;
+    font-size: 1.2em;
+    margin: 0;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    font-weight: 600;
 }
