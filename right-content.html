@@ -3,41 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>呼嚕星系</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-        html {
-            height: auto;
-        }
-        .content {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px 0;
-            margin: 0;
-        }
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-    </style>
+    <title>呼嚕個人網站</title>
+    <link rel="stylesheet" href="hooloo_files/style.css">
 </head>
 <body>
-    <div class="content">
-        <h1>🛸 右側頁面</h1>
-        <p>您已到達右側頁面！</p>
-        <p>向左滑動或點擊左箭頭返回主頁面</p>
+    <div class="container">        <aside class="sidebar">
+            <div class="profile-pic-placeholder">
+                <img src="hooloo_files/profile.jpg" alt="Profile Picture" class="profile-pic">
+            </div>
+            <h2>張翊禾<br>YiHo Chang</h2>
+            <p>AI工程師 & 遊戲開發者<br>AI Engineer & Game Developer</p>
+            <hr>
+            <h3>學歷</h3>
+            <ul>
+                <li>Oregon State University (MS)<br> - Computer Science 電腦科學(2025 fall)</li>
+                <li>國立臺中教育大學 (BS)<br> - 數位內容科技學系&資訊工程學系 雙主修</li>
+            </ul>
+            <h3>個人簡介</h3>
+            <p style="text-align: left;">歡迎來到噗啾的宇宙！<br>(這個宇宙還在翻新整修中><)<br><br>你好，我是張翊禾，個性隨和外向，喜歡嘗試新事物、探索未知和挑戰極限，在資訊領域的專長主要是AI應用開發和系統開發，最近有在專研網路資安領域，夢想是打造火箭<br><br>歡迎寄信或是私訊聯絡我喔！</p>
+            <h3>專長</h3>
+            <ul>
+                <li>Python</li>
+                <li>Machine Learning</li>
+                <li>Pytorch</li>
+                <li>Tensorflow</li>
+                <li>Unity C#</li>
+                <li>HTML CSS JavaScript</li>
+                <li>linux Ubuntu</li>
+                <li>GitHub</li>
+            </ul>
+            <h3>證照</h3>
+            <ul class="certificates">
+                <li><a href="https://www.coursera.org/account/accomplishments/verify/5RTEXB33Q2HG" target="_blank" rel="noopener noreferrer">
+      Generative AI with Large Language Models
+    </a></li>
+                <li><a href="https://www.coursera.org/account/accomplishments/verify/TBFRIWA3XZ6O" target="_blank" rel="noopener noreferrer">
+      Exploratory Data Analysis for Machine Learning
+    </a></li>
+            </ul>
+            <h3>其他外部連結</h3>
+            <ul class="other_links">
+                <li><a href="https://www.linkedin.com/in/yi-ho-chang-294817265/" target="_blank" rel="noopener noreferrer">
+      Linkedin
+    </a></li>
+                
+            </ul>
+        </aside>        
+        <main class="main-content">
+            <canvas id="starfield"></canvas>
+            <!-- 行星將通過 JavaScript 添加 -->
+        </main>
     </div>
+    <script src="hooloo_files/script.js"></script>
 </body>
 </html>
