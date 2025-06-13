@@ -10,6 +10,8 @@ body {
     min-height: 100vh;
     /* 移除所有 scroll-snap，改用 JavaScript 控制 */
     scroll-behavior: smooth;
+    /* 為整個頁面佈局變化添加平滑過渡 */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 為主要區域添加scroll snap points */
@@ -29,7 +31,107 @@ header {
     justify-content: space-between;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
     border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-    /* 移除 scroll-snap */
+    /* 動態 header 樣式 - 現在佔用空間 */
+    position: relative;
+    z-index: 1000;
+    /* 用 margin-top 控制顯示/隱藏，而不是 transform */
+    margin-top: 0;
+    transition: margin-top 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.3s ease,
+                backdrop-filter 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    /* 獲取 header 高度用於計算 */
+    height: auto;
+}
+
+/* Header 隱藏狀態 - 向上收起 */
+header.hidden {
+    margin-top: -120px; /* 大概的 header 高度，會用 JS 動態計算 */
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Header 顯示狀態 */
+header.visible {
+    margin-top: 0;    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 頂部檢測區域 */
+.header-trigger {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;    height: 50px;
+    z-index: 999;
+    background: transparent;
+    pointer-events: auto;
+}
+
+/* Header 下拉提示 */
+.header-hint {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 0 0 15px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* 當 header 隱藏時顯示提示 */
+.header-hint.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 懸停效果 */
+.header-hint:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateX(-50%) translateY(2px);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+.header-hint-arrow {
+    color: rgba(255, 255, 255, 0.8);
+    width: 20px;
+    height: 20px;
+    transition: all 0.3s ease;
+}
+
+.header-hint:hover .header-hint-arrow {
+    color: rgba(255, 255, 255, 1);
+    transform: translateY(2px);
+}
+
+/* 下拉箭頭動畫 */
+.header-hint-arrow svg {
+    width: 100%;
+    height: 100%;
+    animation: hintPulse 2s ease-in-out infinite;
+}
+
+@keyframes hintPulse {
+    0%, 100% { 
+        opacity: 0.6; 
+        transform: translateY(0px);
+    }
+    50% { 
+        opacity: 1; 
+        transform: translateY(2px);
+    }
 }
 
 header .logo {
@@ -115,6 +217,28 @@ header .contact-detail {
 
 /* 移动设备适配 */
 @media (max-width: 768px) {
+    /* Header 在小螢幕上使用較短的動畫時間 */
+    header {
+        transition: transform 0.3s ease,
+                    box-shadow 0.2s ease;
+    }
+      /* 頂部檢測區域在小螢幕上稍微增大 */
+    .header-trigger {
+        height: 60px;
+    }
+    
+    /* 小螢幕上的 header 提示調整 */
+    .header-hint {
+        width: 50px;
+        height: 25px;
+        border-radius: 0 0 12px 12px;
+    }
+    
+    .header-hint-arrow {
+        width: 18px;
+        height: 18px;
+    }
+    
     header .contact-info {
         gap: 15px;
     }
@@ -136,21 +260,81 @@ header .contact-detail {
     header .contact-label {
         font-size: 0.7em;
     }
-    
-    header .contact-detail {
+      header .contact-detail {
         font-size: 0.8em;
+    }
+    
+    /* 小螢幕上的導航條調整 */
+    .navigation-bar {
+        bottom: 20px;
+    }
+    
+    .nav-track {
+        gap: 60px;
+        padding: 12px 25px;
+    }
+    
+    .nav-dot {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .nav-dot-image {
+        width: 40px;
+        height: 40px;
     }
 }
 
 @media (max-width: 480px) {
+    /* 更大的檢測區域，方便觸控 */
+    .header-trigger {
+        height: 70px;
+    }
+    
+    /* 更小螢幕上的 header 提示調整 */
+    .header-hint {
+        width: 45px;
+        height: 22px;
+        border-radius: 0 0 10px 10px;
+    }
+    
+    .header-hint-arrow {
+        width: 16px;
+        height: 16px;
+    }
+    
     header .contact-info {
         flex-direction: column;
         gap: 12px;
     }
-    
-    header .contact-item {
+      header .contact-item {
         justify-content: center;
         min-width: 200px;
+    }
+    
+    /* 更小螢幕上的導航條調整 */
+    .navigation-bar {
+        bottom: 15px;
+    }
+    
+    .nav-track {
+        gap: 40px;
+        padding: 10px 20px;
+    }
+    
+    .nav-dot {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .nav-dot-image {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .nav-spaceship-image {
+        width: 30px;
+        height: 30px;
     }
 }
 
@@ -162,6 +346,8 @@ main {
     scroll-snap-align: start;
     scroll-snap-stop: always;
     min-height: 100vh;
+    /* 為佈局變化添加平滑過渡 */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 優化的動畫基礎 */
@@ -179,51 +365,82 @@ main {
     border-radius: 0;
     box-shadow: none;
     transform: translateZ(0);
-    height: auto;
+    height: calc(100vh - 150px); /* 給content-area更多高度 */
     position: relative;
     overflow: hidden;
     /* 添加scroll snap */
     scroll-snap-align: center;
     scroll-snap-stop: normal;
-    /* 移除固定高度限制，讓JavaScript動態調整 */
-    min-height: 400px; /* 只保留最小高度 */
+    /* 確保有足夠的最小高度 */
+    min-height: 600px;
 }
 
-/* 添加滑動容器 */
-.slide-container {
+/* 滑動容器樣式 - 重新設計 */
+.slider-wrapper {
+    width: 100%;
+    height: 100%; /* 使用父容器的完整高度 */
+    overflow: hidden;
     position: relative;
-    width: 300%; /* 3個頁面的寬度 */
-    height: 100%;
-    display: flex;
-    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    will-change: transform;
-    transform: translateX(-33.333%) translateZ(0); /* 初始位置顯示中間頁面 */
-    /* 提升滾動體驗 */
-    scroll-behavior: smooth;
-    /* 移除固定高度限制，讓JavaScript動態調整 */
-    min-height: 400px; /* 只保留最小高度 */
 }
 
-.slide-page {
-    width: 33.333%; /* 每個頁面佔1/3寬度 */
-    height: 100%;
+.slider-container {
+    width: 300%; /* 三個頁面的總寬度 */
+    height: 100%; /* 使用wrapper的完整高度 */
+    display: flex;
+    transform: translateX(-33.333%); /* 初始顯示中間頁面 */
+    transition: transform 1s ease-in-out;
+}
+
+.slide {
+    width: 33.333%; /* 每個slide佔1/3寬度 */
+    height: 100%; /* 使用容器的完整高度 */
     flex-shrink: 0;
     position: relative;
 }
 
-.slide-page iframe {
+.slide iframe {
     width: 100%;
-    /* 移除固定高度限制，讓JavaScript動態調整 */
-    min-height: 400px; /* 只保留最小高度 */
+    height: 100%; /* 使用slide的完整高度 */
+    min-height: 600px; /* 保證最小高度 */
     border: none;
     border-radius: 15px;
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    overflow: auto;
-    transition: all 0.5s ease;
-    display: block;
-    object-fit: contain;
+}
+
+/* 響應式設計 - 確保內容在不同螢幕大小下都足夠大 */
+@media (min-height: 900px) {
+    .content-area {
+        height: calc(100vh - 120px);
+        min-height: 750px;
+    }
+    
+    .slide iframe {
+        min-height: 750px;
+    }
+}
+
+@media (min-height: 700px) and (max-height: 899px) {
+    .content-area {
+        height: calc(100vh - 140px);
+        min-height: 650px;
+    }
+    
+    .slide iframe {
+        min-height: 650px;
+    }
+}
+
+@media (max-height: 699px) {
+    .content-area {
+        height: calc(100vh - 100px);
+        min-height: 550px;
+    }
+    
+    .slide iframe {
+        min-height: 550px;
+    }
 }
 
 /* 滑動動畫類別 */
@@ -237,6 +454,20 @@ main {
 
 .slide-to-center {
     transform: translateX(-33.333%); /* 回到中心位置 */
+}
+
+/* 滑動方向的視覺效果 */
+.slide-container.sliding-left .slide-page {
+    transform: perspective(1000px) rotateY(-1deg);
+}
+
+.slide-container.sliding-right .slide-page {
+    transform: perspective(1000px) rotateY(1deg);
+}
+
+.slide-container.sliding-left .slide-page.active,
+.slide-container.sliding-right .slide-page.active {
+    transform: perspective(1000px) rotateY(0deg);
 }
 
 /* 頁面過渡效果 */
@@ -529,16 +760,36 @@ main {
     50% { opacity: 1; transform: scale(1.2); }
 }
 
-/* 導航條樣式 - 改為圖片格式 */
+/* 導航條樣式 - 懸浮在畫面最下方 */
 .navigation-bar {
-    position: relative;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
-    margin: 20px 0;
-    z-index: 10;
-    /* 添加scroll snap */
-    scroll-snap-align: center;
-    scroll-snap-stop: normal;
+    z-index: 100;
+    opacity: 0.5;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: auto;
+}
+
+/* 滑鼠懸停時變為不透明 */
+.navigation-bar:hover {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+}
+
+/* 閃爍動畫，頁面載入時提示用戶 */
+.navigation-bar.flash {
+    animation: navigationFlash 2s ease-in-out;
+}
+
+@keyframes navigationFlash {
+    0%, 100% { opacity: 0.5; }
+    16.66%, 33.33% { opacity: 1; }
+    50%, 66.66% { opacity: 0.5; }
+    83.33% { opacity: 1; }
 }
 
 .nav-track {
@@ -633,14 +884,18 @@ main {
 /* 當用戶偏好減少動畫時 */
 @media (prefers-reduced-motion: reduce) {
     .slide-container {
-        transition: none;
+        transition: transform 0.2s ease;
     }
     
     .slide-page iframe {
-        transition: none;
+        transition: all 0.2s ease;
     }
     
     .nav-spaceship-image {
+        animation: none;
+    }
+    
+    .header-hint-arrow svg {
         animation: none;
     }
 }
