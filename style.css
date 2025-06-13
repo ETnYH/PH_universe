@@ -188,8 +188,9 @@ main {
     /* 添加scroll snap */
     scroll-snap-align: center;
     scroll-snap-stop: always;
-    /* 為不同螢幕尺寸設定最佳固定高度 */
-    min-height: 85vh; /* 桌面版預設高度 */
+    /* 確保固定高度，防止累積 */
+    min-height: 85vh;
+    max-height: 85vh; /* 添加最大高度限制 */
 }
 
 /* 添加滑動容器 */
@@ -203,8 +204,11 @@ main {
     transform: translateX(-33.333%) translateZ(0); /* 初始位置顯示中間頁面 */
     /* 提升滾動體驗 */
     scroll-behavior: smooth;
-    /* 確保容器有固定高度 */
+    /* 確保容器有固定高度，防止累積 */
     min-height: 85vh;
+    max-height: 85vh; /* 添加最大高度限制 */
+    /* 重要：防止高度被JavaScript動態修改後累積 */
+    height: 85vh !important;
 }
 
 .slide-page {
@@ -216,17 +220,19 @@ main {
 
 .slide-page iframe {
     width: 100%;
-    /* 為不同螢幕尺寸設定最佳固定高度 */
-    height: 85vh; /* 桌面版高度 */
+    /* 確保iframe高度固定，不會累積 */
+    height: 85vh !important;
+    min-height: 85vh;
+    max-height: 85vh;
     border: none;
     border-radius: 15px;
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    overflow: auto; /* 改為auto以處理內容溢出 */
+    overflow: auto;
     transition: all 0.5s ease;
-    display: block; /* 確保iframe正確顯示 */
-    object-fit: contain; /* 保持內容比例 */
+    display: block;
+    object-fit: contain;
 }
 
 /* 滑動動畫類別 */

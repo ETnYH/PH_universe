@@ -51,58 +51,36 @@ class SpaceNavigation {
     adjustContainerHeight() {
         try {
             const iframes = this.slideContainer.querySelectorAll('iframe');
-            let maxHeight = 400; // 最小高度
             
+            // 先重置所有高度到預設值，避免累積
+            this.slideContainer.style.height = '';
+            
+            // 使用視窗高度作為基準，而不是動態計算
+            const viewportHeight = window.innerHeight;
+            const headerHeight = document.querySelector('header').offsetHeight || 0;
+            const navHeight = document.querySelector('.navigation-bar').offsetHeight || 0;
+            const availableHeight = viewportHeight - headerHeight - navHeight - 40; // 40px for margins
+            
+            // 為所有 iframe 設置統一的固定高度
             iframes.forEach(iframe => {
-                try {
-                    const frameDocument = iframe.contentDocument || iframe.contentWindow.document;
-                    if (frameDocument) {
-                        const frameBody = frameDocument.body;
-                        const frameHtml = frameDocument.documentElement;
-                        
-                        // 清除高度限制
-                        frameBody.style.height = 'auto';
-                        frameBody.style.minHeight = 'auto';
-                        frameHtml.style.height = 'auto';
-                        frameHtml.style.minHeight = 'auto';
-                        
-                        // 強制重新計算佈局
-                        frameBody.offsetHeight;
-                        frameHtml.offsetHeight;
-                        
-                        // 獲取內容高度
-                        const contentHeight = Math.max(
-                            frameBody.scrollHeight,
-                            frameBody.offsetHeight,
-                            frameHtml.scrollHeight,
-                            frameHtml.offsetHeight
-                        );
-                        
-                        if (contentHeight > maxHeight) {
-                            maxHeight = contentHeight;
-                        }
-                        
-                        // 設置iframe高度
-                        iframe.style.height = (contentHeight + 50) + 'px';
-                    }
-                } catch (error) {
-                    // 跨域問題時使用預設高度
-                    iframe.style.height = '600px';
-                    if (600 > maxHeight) {
-                        maxHeight = 600;
-                    }
-                }
+                iframe.style.height = Math.max(availableHeight, 400) + 'px';
             });
             
-            // 設置容器高度
-            this.slideContainer.style.height = (maxHeight + 50) + 'px';
+            // 設置容器高度為固定值
+            this.slideContainer.style.height = Math.max(availableHeight, 400) + 'px';
             
-            console.log(`調整容器高度為: ${maxHeight + 50}px`);
+            console.log(`設置固定容器高度為: ${Math.max(availableHeight, 400)}px`);
             
         } catch (error) {
             console.warn('調整高度時發生錯誤:', error);
-            // 設置預設高度
-            this.slideContainer.style.height = '600px';
+            // 設置預設固定高度
+            const defaultHeight = Math.max(window.innerHeight * 0.7, 400);
+            this.slideContainer.style.height = defaultHeight + 'px';
+            
+            const iframes = this.slideContainer.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                iframe.style.height = defaultHeight + 'px';
+            });
         }
     }
     
