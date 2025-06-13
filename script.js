@@ -10,6 +10,12 @@ class SpaceNavigation {
         // 性能優化：減少重複計算
         this.meteorInterval = null;
         
+        // 滾動控制相關變量
+        this.isScrolling = false;
+        this.scrollTimeout = null;
+        this.lastScrollTop = 0;
+        this.scrollSensitivity = 0.3; // 降低滾動敏感度
+        
         this.pages = {
             left: 0,    // 第一個slide的位置
             main: 1,    // 第二個slide的位置
@@ -30,6 +36,7 @@ class SpaceNavigation {
         this.bindEvents();
         this.addTouchSupport();
         this.initSpaceEffects();
+        this.initScrollSnap(); // 新增滾動定格功能
         
         // 監聽所有iframe載入完成，調整高度
         const iframes = this.slideContainer.querySelectorAll('iframe');
@@ -249,6 +256,103 @@ class SpaceNavigation {
             startY = 0;
             startTime = 0;
         }, { passive: true });
+    }
+    
+    // 初始化滾動定格功能
+    initScrollSnap() {
+        let isThrottled = false;
+        
+        // 監聽滾動事件
+        window.addEventListener('scroll', () => {
+            if (isThrottled) return;
+            
+            isThrottled = true;
+            requestAnimationFrame(() => {
+                this.handleScroll();
+                isThrottled = false;
+            });
+        }, { passive: true });
+        
+        // 監聽滾動結束事件
+        window.addEventListener('scrollend', () => {
+            this.snapToNearestSection();
+        });
+        
+        // 為了兼容性，也監聽滾動停止
+        window.addEventListener('scroll', () => {
+            clearTimeout(this.scrollTimeout);
+            this.scrollTimeout = setTimeout(() => {
+                this.snapToNearestSection();
+            }, 150);
+        }, { passive: true });
+    }
+    
+    // 處理滾動事件
+    handleScroll() {
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollDirection = currentScrollTop > this.lastScrollTop ? 'down' : 'up';
+        
+        // 降低滾動速度的影響
+        if (Math.abs(currentScrollTop - this.lastScrollTop) < 5) {
+            return; // 忽略微小的滾動
+        }
+        
+        this.lastScrollTop = currentScrollTop;
+        this.isScrolling = true;
+        
+        // 清除之前的timeout
+        clearTimeout(this.scrollTimeout);
+        
+        // 設置滾動結束檢測
+        this.scrollTimeout = setTimeout(() => {
+            this.isScrolling = false;
+            this.snapToNearestSection();
+        }, 100);
+    }
+    
+    // 定格到最近的區域
+    snapToNearestSection() {
+        if (this.isScrolling) return;
+        
+        const header = document.querySelector('header');
+        const navigationBar = document.querySelector('.navigation-bar');
+        const contentArea = document.querySelector('.content-area');
+        
+        const headerRect = header.getBoundingClientRect();
+        const navRect = navigationBar.getBoundingClientRect();
+        const contentRect = contentArea.getBoundingClientRect();
+        
+        const viewportHeight = window.innerHeight;
+        const threshold = viewportHeight * 0.3; // 30% 的視窗高度作為閾值
+        
+        // 判斷哪個區域最接近視窗頂部
+        let targetElement = null;
+        let minDistance = Infinity;
+        
+        const elements = [
+            { element: header, rect: headerRect, name: 'header' },
+            { element: navigationBar, rect: navRect, name: 'navigation' },
+            { element: contentArea, rect: contentRect, name: 'content' }
+        ];
+        
+        elements.forEach(({ element, rect, name }) => {
+            const distance = Math.abs(rect.top);
+            if (distance < minDistance && rect.top < threshold && rect.bottom > -threshold) {
+                minDistance = distance;
+                targetElement = element;
+            }
+        });
+        
+        // 如果找到目標元素，平滑滾動到該位置
+        if (targetElement) {
+            const targetTop = targetElement.offsetTop;
+            
+            // 使用平滑滾動
+            window.scrollTo({
+                top: targetTop,
+                behavior: 'smooth'
+            });
+        }
     }
     
     // 清理資源

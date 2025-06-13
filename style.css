@@ -8,56 +8,35 @@ body {
     overflow-x: hidden;
     position: relative;
     min-height: 100vh;
+    /* 添加平滑滾動和scroll snap */
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
 }
 
-/* 星空背景動畫 */
-.stars {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: -1;
+/* 為主要區域添加scroll snap points */
+html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
 }
 
-.star {
-    position: absolute;
-    background: white;
-    border-radius: 50%;
-    animation: twinkle 2s infinite ease-in-out;
-}
-
-.star:nth-child(1) { width: 1px; height: 1px; top: 20%; left: 20%; animation-delay: 0s; }
-.star:nth-child(2) { width: 2px; height: 2px; top: 60%; left: 30%; animation-delay: 0.5s; }
-.star:nth-child(3) { width: 1px; height: 1px; top: 10%; left: 70%; animation-delay: 1s; }
-.star:nth-child(4) { width: 2px; height: 2px; top: 80%; left: 80%; animation-delay: 1.5s; }
-.star:nth-child(5) { width: 1px; height: 1px; top: 30%; left: 60%; animation-delay: 0.3s; }
-.star:nth-child(6) { width: 2px; height: 2px; top: 50%; left: 10%; animation-delay: 0.8s; }
-.star:nth-child(7) { width: 1px; height: 1px; top: 70%; left: 40%; animation-delay: 1.2s; }
-.star:nth-child(8) { width: 2px; height: 2px; top: 15%; left: 90%; animation-delay: 0.2s; }
-.star:nth-child(9) { width: 1px; height: 1px; top: 90%; left: 50%; animation-delay: 0.7s; }
-.star:nth-child(10) { width: 2px; height: 2px; top: 40%; left: 85%; animation-delay: 1.3s; }
-
-@keyframes twinkle {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.2); }
-}
-
+/* 每個主要section都成為snap point */
 header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     padding: 20px 30px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-    text-align: center;
     border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    /* 添加scroll snap */
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
 }
 
 header .logo {
-    margin-bottom: 15px;
+    margin-bottom: 0;
 }
 
 header .logo img {
@@ -182,6 +161,10 @@ main {
     position: relative; 
     padding: 20px;
     /* 移除固定的最小高度，讓內容決定高度 */
+    /* 添加scroll snap */
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    min-height: 100vh;
 }
 
 /* 優化的動畫基礎 */
@@ -202,6 +185,11 @@ main {
     height: auto;
     position: relative;
     overflow: hidden;
+    /* 添加scroll snap */
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    /* 為不同螢幕尺寸設定最佳固定高度 */
+    min-height: 85vh; /* 桌面版預設高度 */
 }
 
 /* 添加滑動容器 */
@@ -212,7 +200,11 @@ main {
     display: flex;
     transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     will-change: transform;
-    transform: translateX(-33.333%); /* 初始位置顯示中間頁面 */
+    transform: translateX(-33.333%) translateZ(0); /* 初始位置顯示中間頁面 */
+    /* 提升滾動體驗 */
+    scroll-behavior: smooth;
+    /* 確保容器有固定高度 */
+    min-height: 85vh;
 }
 
 .slide-page {
@@ -224,26 +216,26 @@ main {
 
 .slide-page iframe {
     width: 100%;
-    height: auto;
+    /* 為不同螢幕尺寸設定最佳固定高度 */
+    height: 85vh; /* 桌面版高度 */
     border: none;
     border-radius: 15px;
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    overflow: visible;
-    min-height: 400px;
+    overflow: auto; /* 改為auto以處理內容溢出 */
     transition: all 0.5s ease;
+    display: block; /* 確保iframe正確顯示 */
+    object-fit: contain; /* 保持內容比例 */
 }
-
-
 
 /* 滑動動畫類別 */
 .slide-to-left {
-    transform: translateX(-33.333%); /* 向左滑動，顯示右頁面 */
+    transform: translateX(0%); /* 向左滑動，顯示右頁面 */
 }
 
 .slide-to-right {
-    transform: translateX(33.333%); /* 向右滑動，顯示左頁面 */
+    transform: translateX(-66.666%); /* 向右滑動，顯示左頁面 */
 }
 
 .slide-to-center {
@@ -266,14 +258,278 @@ main {
     transform: translateX(20px);
 }
 
-/* 性能優化 */
-* {
-    box-sizing: border-box;
+/* 大桌面螢幕 (1920px 以上) */
+@media (min-width: 1920px) {
+    .content-area {
+        min-height: 80vh;
+    }
+    
+    .slide-container {
+        min-height: 80vh;
+    }
+    
+    .slide-page iframe {
+        height: 80vh;
+    }
 }
 
-/* 減少重繪 */
-.hover-nav {
-    contain: layout style paint;
+/* 標準桌面螢幕 (1200px - 1919px) */
+@media (min-width: 1200px) and (max-width: 1919px) {
+    .content-area {
+        min-height: 85vh;
+    }
+    
+    .slide-container {
+        min-height: 85vh;
+    }
+    
+    .slide-page iframe {
+        height: 85vh;
+    }
+}
+
+/* 小桌面/大平板 (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+    .content-area {
+        min-height: 75vh;
+    }
+    
+    .slide-container {
+        min-height: 75vh;
+    }
+    
+    .slide-page iframe {
+        height: 75vh;
+    }
+}
+
+/* 平板橫向 (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    .content-area {
+        min-height: 70vh;
+    }
+    
+    .slide-container {
+        min-height: 70vh;
+    }
+    
+    .slide-page iframe {
+        height: 70vh;
+    }
+    
+    /* 調整導航條在平板上的間距 */
+    .nav-track {
+        gap: 60px;
+        padding: 12px 25px;
+    }
+}
+
+/* 平板直向/大手機橫向 (576px - 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+    .content-area {
+        min-height: 65vh;
+        margin-top: 20px;
+    }
+    
+    .slide-container {
+        min-height: 65vh;
+    }
+    
+    .slide-page iframe {
+        height: 65vh;
+    }
+    
+    /* 調整導航條 */
+    .nav-track {
+        gap: 40px;
+        padding: 10px 20px;
+    }
+    
+    .nav-dot-image {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .nav-spaceship-image {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* 手機橫向 (480px - 575px) */
+@media (min-width: 480px) and (max-width: 575px) {
+    .content-area {
+        min-height: 60vh;
+        margin-top: 15px;
+    }
+    
+    .slide-container {
+        min-height: 60vh;
+    }
+    
+    .slide-page iframe {
+        height: 60vh;
+    }
+    
+    /* 進一步調整導航條 */
+    .nav-track {
+        gap: 30px;
+        padding: 8px 15px;
+    }
+    
+    .nav-dot-image {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .nav-spaceship-image {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+/* 小手機 (320px - 479px) */
+@media (max-width: 479px) {
+    .content-area {
+        min-height: 55vh;
+        margin-top: 10px;
+    }
+    
+    .slide-container {
+        min-height: 55vh;
+    }
+    
+    .slide-page iframe {
+        height: 55vh;
+    }
+    
+    /* 最小螢幕的導航條調整 */
+    .nav-track {
+        gap: 25px;
+        padding: 8px 12px;
+    }
+    
+    .nav-dot-image {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .nav-spaceship-image {
+        width: 25px;
+        height: 25px;
+    }
+    
+    /* 調整主要區域padding */
+    main {
+        padding: 10px;
+    }
+}
+
+/* 極小螢幕 (小於320px) */
+@media (max-width: 319px) {
+    .content-area {
+        min-height: 50vh;
+        margin-top: 10px;
+    }
+    
+    .slide-container {
+        min-height: 50vh;
+    }
+    
+    .slide-page iframe {
+        height: 50vh;
+    }
+    
+    .nav-track {
+        gap: 20px;
+        padding: 6px 10px;
+    }
+    
+    .nav-dot-image {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .nav-spaceship-image {
+        width: 20px;
+        height: 20px;
+    }
+    
+    main {
+        padding: 8px;
+    }
+}
+
+/* 高解析度螢幕優化 */
+@media (min-resolution: 192dpi), (min-resolution: 2dppx) {
+    .slide-page iframe {
+        /* 高DPI螢幕下微調高度以獲得更好的視覺效果 */
+        height: calc(var(--iframe-height, 85vh) - 2vh);
+    }
+}
+
+/* 橫向螢幕優化 */
+@media (orientation: landscape) and (max-height: 600px) {
+    .content-area {
+        min-height: 80vh;
+    }
+    
+    .slide-container {
+        min-height: 80vh;
+    }
+    
+    .slide-page iframe {
+        height: 80vh;
+    }
+}
+
+/* 直向螢幕優化 */
+@media (orientation: portrait) and (max-width: 768px) {
+    .content-area {
+        min-height: 60vh;
+    }
+    
+    .slide-container {
+        min-height: 60vh;
+    }
+    
+    .slide-page iframe {
+        height: 60vh;
+    }
+}
+
+/* 星空背景動畫 */
+.stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 2s infinite ease-in-out;
+}
+
+.star:nth-child(1) { width: 1px; height: 1px; top: 20%; left: 20%; animation-delay: 0s; }
+.star:nth-child(2) { width: 2px; height: 2px; top: 60%; left: 30%; animation-delay: 0.5s; }
+.star:nth-child(3) { width: 1px; height: 1px; top: 10%; left: 70%; animation-delay: 1s; }
+.star:nth-child(4) { width: 2px; height: 2px; top: 80%; left: 80%; animation-delay: 1.5s; }
+.star:nth-child(5) { width: 1px; height: 1px; top: 30%; left: 60%; animation-delay: 0.3s; }
+.star:nth-child(6) { width: 2px; height: 2px; top: 50%; left: 10%; animation-delay: 0.8s; }
+.star:nth-child(7) { width: 1px; height: 1px; top: 70%; left: 40%; animation-delay: 1.2s; }
+.star:nth-child(8) { width: 2px; height: 2px; top: 15%; left: 90%; animation-delay: 0.2s; }
+.star:nth-child(9) { width: 1px; height: 1px; top: 90%; left: 50%; animation-delay: 0.7s; }
+.star:nth-child(10) { width: 2px; height: 2px; top: 40%; left: 85%; animation-delay: 1.3s; }
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
 }
 
 /* 導航條樣式 - 改為圖片格式 */
@@ -283,6 +539,9 @@ main {
     justify-content: center;
     margin: 20px 0;
     z-index: 10;
+    /* 添加scroll snap */
+    scroll-snap-align: center;
+    scroll-snap-stop: normal;
 }
 
 .nav-track {
@@ -362,4 +621,40 @@ main {
 
 .nav-spaceship.position-right {
     left: calc(15px + 40px + 100px + 40px + 100px + 40px/2); /* padding + 第一個點 + gap + 第二個點 + gap + 第三個點寬度的一半 */
+}
+
+/* 性能優化 */
+* {
+    box-sizing: border-box;
+}
+
+/* 減少重繪 */
+.hover-nav {
+    contain: layout style paint;
+}
+
+/* 當用戶偏好減少動畫時 */
+@media (prefers-reduced-motion: reduce) {
+    .slide-container {
+        transition: none;
+    }
+    
+    .slide-page iframe {
+        transition: none;
+    }
+    
+    .nav-spaceship-image {
+        animation: none;
+    }
+}
+
+/* 平滑的高度過渡 */
+@media (prefers-reduced-motion: no-preference) {
+    .slide-page iframe {
+        transition: height 0.3s ease, all 0.5s ease;
+    }
+    
+    .content-area, .slide-container {
+        transition: min-height 0.3s ease;
+    }
 }
