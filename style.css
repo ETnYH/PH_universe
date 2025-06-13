@@ -8,15 +8,15 @@ body {
     overflow-x: hidden;
     position: relative;
     min-height: 100vh;
-    /* 添加平滑滾動和scroll snap */
+    /* 改善滾動吸附效果 */
     scroll-behavior: smooth;
-    scroll-snap-type: y mandatory;
+    scroll-snap-type: y proximity; /* 改為 proximity 讓吸附更自然 */
 }
 
 /* 為主要區域添加scroll snap points */
 html {
     scroll-behavior: smooth;
-    scroll-snap-type: y mandatory;
+    scroll-snap-type: y proximity; /* 改為 proximity */
 }
 
 /* 每個主要section都成為snap point */
@@ -30,9 +30,9 @@ header {
     justify-content: space-between;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
     border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-    /* 添加scroll snap */
+    /* 改善吸附效果 */
     scroll-snap-align: start;
-    scroll-snap-stop: always;
+    scroll-snap-stop: normal; /* 改為 normal */
 }
 
 header .logo {
@@ -187,10 +187,9 @@ main {
     overflow: hidden;
     /* 添加scroll snap */
     scroll-snap-align: center;
-    scroll-snap-stop: always;
-    /* 確保固定高度，防止累積 */
-    min-height: 85vh;
-    max-height: 85vh; /* 添加最大高度限制 */
+    scroll-snap-stop: normal;
+    /* 移除固定高度限制，讓JavaScript動態調整 */
+    min-height: 400px; /* 只保留最小高度 */
 }
 
 /* 添加滑動容器 */
@@ -204,11 +203,8 @@ main {
     transform: translateX(-33.333%) translateZ(0); /* 初始位置顯示中間頁面 */
     /* 提升滾動體驗 */
     scroll-behavior: smooth;
-    /* 確保容器有固定高度，防止累積 */
-    min-height: 85vh;
-    max-height: 85vh; /* 添加最大高度限制 */
-    /* 重要：防止高度被JavaScript動態修改後累積 */
-    height: 85vh !important;
+    /* 移除固定高度限制，讓JavaScript動態調整 */
+    min-height: 400px; /* 只保留最小高度 */
 }
 
 .slide-page {
@@ -220,10 +216,8 @@ main {
 
 .slide-page iframe {
     width: 100%;
-    /* 確保iframe高度固定，不會累積 */
-    height: 85vh !important;
-    min-height: 85vh;
-    max-height: 85vh;
+    /* 移除固定高度限制，讓JavaScript動態調整 */
+    min-height: 400px; /* 只保留最小高度 */
     border: none;
     border-radius: 15px;
     background: rgba(255, 255, 255, 0.05);
