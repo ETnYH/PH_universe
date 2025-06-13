@@ -10,6 +10,12 @@ class SpaceNavigation {
         // 性能優化：減少重複計算
         this.meteorInterval = null;
         
+        // 滾動控制相關變量
+        this.isScrolling = false;
+        this.scrollTimeout = null;
+        this.lastScrollTop = 0;
+        this.scrollSensitivity = 0.3; // 降低滾動敏感度
+        
         this.pages = {
             left: 0,    // 第一個slide的位置
             main: 1,    // 第二個slide的位置
@@ -30,6 +36,7 @@ class SpaceNavigation {
         this.bindEvents();
         this.addTouchSupport();
         this.initSpaceEffects();
+        this.initScrollSnap(); // 新增滾動定格功能
         
         // 監聽所有iframe載入完成，調整高度
         const iframes = this.slideContainer.querySelectorAll('iframe');
@@ -44,58 +51,46 @@ class SpaceNavigation {
     adjustContainerHeight() {
         try {
             const iframes = this.slideContainer.querySelectorAll('iframe');
-            let maxHeight = 400; // 最小高度
             
+            // 計算可用空間，大幅增加顯示高度
+            const viewportHeight = window.innerHeight;
+            const headerHeight = document.querySelector('header').offsetHeight || 0;
+            const navHeight = document.querySelector('.navigation-bar').offsetHeight || 0;
+            const margins = 40; // 減少邊距，給內容更多空間
+            
+            // 計算最適合的高度 - 大幅增加顯示區域
+            let optimalHeight;
+            if (viewportHeight >= 800) {
+                // 大螢幕：使用更大比例，幾乎全螢幕
+                optimalHeight = Math.max(viewportHeight - headerHeight - navHeight - margins, 700);
+            } else if (viewportHeight >= 600) {
+                // 中等螢幕：使用更大比例
+                optimalHeight = Math.max(viewportHeight * 0.85, 600);
+            } else {
+                // 小螢幕：也要確保足夠的顯示空間
+                optimalHeight = Math.max(viewportHeight * 0.75, 500);
+            }
+            
+            // 為所有 iframe 設置統一的高度
             iframes.forEach(iframe => {
-                try {
-                    const frameDocument = iframe.contentDocument || iframe.contentWindow.document;
-                    if (frameDocument) {
-                        const frameBody = frameDocument.body;
-                        const frameHtml = frameDocument.documentElement;
-                        
-                        // 清除高度限制
-                        frameBody.style.height = 'auto';
-                        frameBody.style.minHeight = 'auto';
-                        frameHtml.style.height = 'auto';
-                        frameHtml.style.minHeight = 'auto';
-                        
-                        // 強制重新計算佈局
-                        frameBody.offsetHeight;
-                        frameHtml.offsetHeight;
-                        
-                        // 獲取內容高度
-                        const contentHeight = Math.max(
-                            frameBody.scrollHeight,
-                            frameBody.offsetHeight,
-                            frameHtml.scrollHeight,
-                            frameHtml.offsetHeight
-                        );
-                        
-                        if (contentHeight > maxHeight) {
-                            maxHeight = contentHeight;
-                        }
-                        
-                        // 設置iframe高度
-                        iframe.style.height = (contentHeight + 50) + 'px';
-                    }
-                } catch (error) {
-                    // 跨域問題時使用預設高度
-                    iframe.style.height = '600px';
-                    if (600 > maxHeight) {
-                        maxHeight = 600;
-                    }
-                }
+                iframe.style.height = optimalHeight + 'px';
             });
             
             // 設置容器高度
-            this.slideContainer.style.height = (maxHeight + 50) + 'px';
+            this.slideContainer.style.height = optimalHeight + 'px';
             
-            console.log(`調整容器高度為: ${maxHeight + 50}px`);
+            console.log(`設置增強高度為: ${optimalHeight}px (視窗高度: ${viewportHeight}px)`);
             
         } catch (error) {
             console.warn('調整高度時發生錯誤:', error);
-            // 設置預設高度
-            this.slideContainer.style.height = '600px';
+            // 設置更大的預設高度
+            const defaultHeight = Math.max(window.innerHeight * 0.85, 700);
+            this.slideContainer.style.height = defaultHeight + 'px';
+            
+            const iframes = this.slideContainer.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                iframe.style.height = defaultHeight + 'px';
+            });
         }
     }
     
@@ -249,6 +244,111 @@ class SpaceNavigation {
             startY = 0;
             startTime = 0;
         }, { passive: true });
+    }
+    
+    // 初始化滾動定格功能
+    initScrollSnap() {
+        let scrollTimeout = null;
+        let isUserScrolling = false;
+        
+        // 監聽滾動開始
+        window.addEventListener('scroll', () => {
+            isUserScrolling = true;
+            clearTimeout(scrollTimeout);
+            
+            // 延遲執行吸附，給用戶時間查看內容
+            scrollTimeout = setTimeout(() => {
+                if (!this.isScrolling) {
+                    this.performSnap();
+                }
+                isUserScrolling = false;
+            }, 500); // 增加延遲，讓用戶有充分時間查看
+        }, { passive: true });
+    }
+    
+    // 執行吸附邏輯
+    performSnap() {
+        const currentScrollTop = window.pageYOffset;
+        const viewportHeight = window.innerHeight;
+        
+        const header = document.querySelector('header');
+        const navigation = document.querySelector('.navigation-bar');
+        const content = document.querySelector('.content-area');
+        
+        if (!header || !navigation || !content) return;
+        
+        // 計算各區域的位置和範圍
+        const headerTop = 0;
+        const headerBottom = header.offsetHeight;
+        
+        const navTop = header.offsetHeight;
+        const navBottom = navTop + navigation.offsetHeight;
+        
+        const contentTop = navBottom;
+        const contentBottom = contentTop + content.offsetHeight;
+        
+        // 當前視窗位置
+        const scrollCenter = currentScrollTop + viewportHeight / 2;
+        
+        // 判斷應該吸附到哪個區域
+        let targetScrollTop = null;
+        
+        if (scrollCenter < headerBottom) {
+            // 靠近頂部，吸附到頁首
+            targetScrollTop = headerTop;
+        } else if (scrollCenter < navBottom) {
+            // 在導航區域，吸附到導航條
+            targetScrollTop = navTop;
+        } else if (scrollCenter < contentBottom) {
+            // 在內容區域
+            const contentProgress = (scrollCenter - contentTop) / (contentBottom - contentTop);
+            
+            if (contentProgress < 0.3) {
+                // 在內容區域上方，吸附到內容開始
+                targetScrollTop = contentTop;
+            } else if (contentProgress > 0.7) {
+                // 在內容區域下方，檢查是否能看到底部
+                const maxScroll = Math.max(0, document.documentElement.scrollHeight - viewportHeight);
+                if (currentScrollTop >= maxScroll - 50) {
+                    // 已經接近底部，不執行吸附
+                    return;
+                } else {
+                    // 吸附到內容開始，讓用戶能完整查看
+                    targetScrollTop = contentTop;
+                }
+            } else {
+                // 在內容區域中間，不執行吸附，讓用戶自由查看
+                return;
+            }
+        }
+        
+        // 執行吸附
+        if (targetScrollTop !== null && Math.abs(currentScrollTop - targetScrollTop) > 20) {
+            window.scrollTo({
+                top: targetScrollTop,
+                behavior: 'smooth'
+            });
+            
+            console.log(`吸附到位置: ${targetScrollTop}px`);
+        }
+    }
+    
+    // 處理滾動事件
+    handleScroll() {
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (Math.abs(currentScrollTop - this.lastScrollTop) < 3) {
+            return;
+        }
+        
+        this.lastScrollTop = currentScrollTop;
+        this.isScrolling = true;
+        
+        clearTimeout(this.scrollTimeout);
+        
+        this.scrollTimeout = setTimeout(() => {
+            this.isScrolling = false;
+        }, 100);
     }
     
     // 清理資源
