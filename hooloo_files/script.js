@@ -315,57 +315,60 @@ document.addEventListener('DOMContentLoaded', () => {
         const centerY = height / 2;
         
         drawStarsLayer(centerX, centerY, false); // 前方星星
-    }
-    
-    function drawStarsLayer(centerX, centerY, isBackground) {
+    }    function drawStarsLayer(centerX, centerY, isBackground) {
         ctx.globalCompositeOperation = 'lighter';
         
         for (let i = 0; i < stars.length; i++) {
             const star = stars[i];
             
-            // 根據 isBackground 參數決定繪製哪些星星
-            if (isBackground && star.zPosition >= 0) continue;
-            if (!isBackground && star.zPosition < 0) continue;
-              // 更新星星的軌道位置
+            // 更新星星的軌道位置
             star.angle += star.orbitSpeed;
             star.twinkle += star.twinkleSpeed;
             
-            // 動態更新星星的z位置基於其軌道角度（讓星星能前後移動）
-            star.zPosition = Math.sin(star.angle + star.distance * 0.001) * 0.8;
-              // 計算3D軌道位置
-            const zOffset = star.zPosition * 0.15;
+            // 計算3D軌道位置
             const x = centerX + Math.cos(star.angle) * star.distance;
-            const y = centerY + Math.sin(star.angle) * star.distance * (0.3 + zOffset);
-              // 計算黑洞遮擋效果 - 所有在後方的星星都要檢查遮擋
-            const distanceFromBlackHoleCenter = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
-            let occlusionFactor = 1.0; // 1.0 = 完全可見, 0.0 = 完全遮擋
+            const y = centerY + Math.sin(star.angle) * star.distance * 0.3;
             
-            // 對所有在後方的星星進行遮擋檢查（不只是isBackground階段）
-            if (star.zPosition < 0 && distanceFromBlackHoleCenter < blackHoleRadius * 1.6) {
-                // 計算遮擋程度 - 距離黑洞越近，遮擋越多
-                const maxOcclusionDistance = blackHoleRadius * 1.6;
-                const minOcclusionDistance = blackHoleRadius * 0.7;
+            // 根據角度判斷前後關係
+            // 當 sin(angle) <= 0 時，星星在上半圓，在黑洞後方
+            const starIsInBackground = Math.sin(star.angle) <= 0;
+            
+            // 根據 isBackground 參數決定繪製哪些星星
+            if (isBackground && !starIsInBackground) continue;
+            if (!isBackground && starIsInBackground) continue;
+            
+            // 計算黑洞遮擋效果 - 只對後方星星進行遮擋檢查
+            let occlusionFactor = 1.0;
+            
+            if (isBackground && starIsInBackground) {
+                const distanceFromBlackHoleCenter = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
                 
-                if (distanceFromBlackHoleCenter < minOcclusionDistance) {
-                    occlusionFactor = 0.01; // 幾乎完全遮擋
-                } else {
-                    // 漸進式遮擋
-                    const distanceRatio = (distanceFromBlackHoleCenter - minOcclusionDistance) / 
-                                        (maxOcclusionDistance - minOcclusionDistance);
-                    occlusionFactor = 0.01 + (distanceRatio * 0.99); // 從0.01到1.0的漸變
+                if (distanceFromBlackHoleCenter < blackHoleRadius * 1.6) {
+                    const maxOcclusionDistance = blackHoleRadius * 1.6;
+                    const minOcclusionDistance = blackHoleRadius * 0.7;
+                    
+                    if (distanceFromBlackHoleCenter < minOcclusionDistance) {
+                        occlusionFactor = 0.0; // 完全遮擋
+                    } else {
+                        // 漸進式遮擋
+                        const distanceRatio = (distanceFromBlackHoleCenter - minOcclusionDistance) / 
+                                            (maxOcclusionDistance - minOcclusionDistance);
+                        occlusionFactor = distanceRatio;
+                    }
                 }
             }
-              // 計算亮度
+              
+            // 計算亮度
             const twinkleBrightness = (Math.sin(star.twinkle) + 1) * 0.25 + 0.5;
             let brightness = star.brightness * twinkleBrightness;
             
-            // 後方星星大幅減暗
+            // 後方星星減暗
             if (isBackground) {
-                brightness *= 0.2;
+                brightness *= 0.4;
             }
             
-            // 根據z位置調整亮度
-            const depthBrightness = 0.5 + star.zPosition * 0.5;
+            // 根據前後位置調整亮度
+            const depthBrightness = starIsInBackground ? 0.6 : 1.0;
             brightness *= depthBrightness;
             
             // 應用遮擋效果到亮度
@@ -380,9 +383,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // 根據前後位置調整星星大小
             let starSize = star.size;
             if (isBackground) {
-                starSize *= 0.6;
+                starSize *= 0.7;
             }
-            starSize *= (0.6 + star.zPosition * 0.4);
+            if (starIsInBackground) {
+                starSize *= 0.8; // 後方星星略小
+            }
             
             ctx.beginPath();
             ctx.arc(x, y, starSize, 0, TWO_PI);
@@ -390,16 +395,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         ctx.globalCompositeOperation = 'source-over';
-    }    function drawPlanets() {
+    }function drawPlanets() {
         const centerX = width / 2;
         const centerY = height / 2;
         
-        // 繪製後方星球和星環
+        // 繪製後方星球和星環 (在上半圓的星球 = 在黑洞後方)
         for (let i = 0; i < planets.length; i++) {
             const planet = planets[i];
-            // 動態計算z位置來決定是否在後方
-            const currentZ = Math.sin(planet.angle + planet.id) * 0.8;
-            if (currentZ < 0) {
+            
+            // 計算移動方向：上半圓的星球在後方
+            // 當 sin(angle) <= 0 時，星球在上半圓，在黑洞後方
+            const isInBackground = Math.sin(planet.angle) <= 0;
+            
+            if (isInBackground) {
+                planet.isInBackground = true;
                 drawPlanet(planet, centerX, centerY);
                 drawPlanetRings(i, centerX, centerY, true); // 繪製後方星環
             }
@@ -413,55 +422,41 @@ document.addEventListener('DOMContentLoaded', () => {
         // 重置懸停狀態
         hoveredPlanet = null;
         
-        // 繪製前方星球和星環
+        // 繪製前方星球和星環 (在下半圓的星球 = 在黑洞前方)
         for (let i = 0; i < planets.length; i++) {
             const planet = planets[i];
-            // 動態計算z位置來決定是否在前方
-            const currentZ = Math.sin(planet.angle + planet.id) * 0.8;
-            if (currentZ >= 0) {
+            
+            // 計算移動方向：下半圓的星球在前方
+            const isInBackground = Math.sin(planet.angle) <= 0;
+            
+            if (!isInBackground) {
+                planet.isInBackground = false;
                 drawPlanet(planet, centerX, centerY);
                 drawPlanetRings(i, centerX, centerY, false); // 繪製前方星環
             }
         }
-    }
-      function drawPlanet(planet, centerX, centerY) {
+    }      function drawPlanet(planet, centerX, centerY) {
         // 更新行星位置
         planet.angle += planet.orbitSpeed;
         planet.pulsePhase += 0.02;
-        
-        // 動態更新z位置，讓星球在軌道上前後移動
-        planet.zPosition = Math.sin(planet.angle + planet.id) * 0.8;
         
         // 計算3D位置
         const x = centerX + Math.cos(planet.angle) * planet.distance;
         const y = centerY + Math.sin(planet.angle) * planet.distance * 0.3; // 橢圓軌道
         
-        // 計算黑洞遮擋效果（部分遮擋而不是完全隱藏）
-        const distanceFromBlackHoleCenter = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
-        let occlusionFactor = 1.0; // 1.0 = 完全可見, 0.0 = 完全遮擋
+        // 根據角度判斷是否在黑洞後方
+        // 當 sin(angle) <= 0 時，星球在上半圓，在黑洞後方
+        const isInBackground = Math.sin(planet.angle) <= 0;
+        planet.isInBackground = isInBackground;
         
-        if (planet.zPosition < 0 && distanceFromBlackHoleCenter < blackHoleRadius * 1.5) {
-            // 計算遮擋程度 - 距離黑洞越近，遮擋越多
-            const maxOcclusionDistance = blackHoleRadius * 1.5;
-            const minOcclusionDistance = blackHoleRadius * 0.8;
-            
-            if (distanceFromBlackHoleCenter < minOcclusionDistance) {
-                occlusionFactor = 0.1; // 幾乎完全遮擋但仍可見
-            } else {
-                // 漸進式遮擋
-                const distanceRatio = (distanceFromBlackHoleCenter - minOcclusionDistance) / 
-                                    (maxOcclusionDistance - minOcclusionDistance);
-                occlusionFactor = 0.1 + (distanceRatio * 0.9); // 從0.1到1.0的漸變
-            }
-        }
-        
-        // 計算深度效果
-        const depthEffect = 1 + planet.zPosition * 0.2;
+        // 計算深度效果 - 後方星球較小，前方星球較大
+        const depthEffect = isInBackground ? 0.85 : 1.15;
         
         // 計算脈衝效果
         const pulseVariation = Math.sin(planet.pulsePhase) * 0.1 + 1;
         const planetSize = planet.baseSize * depthEffect * pulseVariation;
-          // 檢查滑鼠懸停（始終可以點擊，不受遮擋影響）
+          
+        // 檢查滑鼠懸停
         const distanceFromMouse = Math.sqrt((mouseX - x) ** 2 + (mouseY - y) ** 2);
         planet.isHovered = distanceFromMouse < planetSize;
         if (planet.isHovered) {
@@ -472,49 +467,73 @@ document.addEventListener('DOMContentLoaded', () => {
         const hoverScale = planet.isHovered ? 1.2 : 1;
         const finalSize = planetSize * hoverScale;
         
-        // 根據z位置和遮擋程度調整透明度
-        const baseAlphaMultiplier = planet.zPosition < 0 ? 0.4 : 1.0;
-        const alphaMultiplier = baseAlphaMultiplier * occlusionFactor;
+        // 計算黑洞遮擋效果（只影響後方星球的光暈）
+        const distanceFromBlackHoleCenter = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+        let glowOcclusionFactor = 1.0;
+        
+        // 只有後方星球（上半圓）且靠近黑洞時才進行遮擋
+        if (isInBackground && distanceFromBlackHoleCenter < blackHoleRadius * 1.6) {
+            const maxOcclusionDistance = blackHoleRadius * 1.6;
+            const minOcclusionDistance = blackHoleRadius * 0.9;
+            
+            if (distanceFromBlackHoleCenter < minOcclusionDistance) {
+                glowOcclusionFactor = 0.1; // 光暈幾乎完全遮擋
+            } else {
+                // 漸進式遮擋光暈
+                const distanceRatio = (distanceFromBlackHoleCenter - minOcclusionDistance) / 
+                                    (maxOcclusionDistance - minOcclusionDistance);
+                glowOcclusionFactor = 0.1 + (distanceRatio * 0.9);
+            }
+        }
         
         // 繪製大氣層光暈
         const atmosphereSize = planet.atmosphereSize * depthEffect * hoverScale * 1.5;
         ctx.globalCompositeOperation = 'lighter';
         
         const atmosphereGradient = ctx.createRadialGradient(x, y, 0, x, y, atmosphereSize);
-        const glowAlpha = planet.glowIntensity * (planet.isHovered ? 0.6 : 0.3) * alphaMultiplier;
-        atmosphereGradient.addColorStop(0, `rgba(${planet.color.r}, ${planet.color.g}, ${planet.color.b}, ${glowAlpha})`);
-        atmosphereGradient.addColorStop(0.4, `rgba(${planet.color.r}, ${planet.color.g}, ${planet.color.b}, ${glowAlpha * 0.4})`);
+        const baseGlowAlpha = planet.glowIntensity * (planet.isHovered ? 0.6 : 0.3);
+        const adjustedGlowAlpha = isInBackground ? baseGlowAlpha * 0.4 * glowOcclusionFactor : baseGlowAlpha;
+        
+        atmosphereGradient.addColorStop(0, `rgba(${planet.color.r}, ${planet.color.g}, ${planet.color.b}, ${adjustedGlowAlpha})`);
+        atmosphereGradient.addColorStop(0.4, `rgba(${planet.color.r}, ${planet.color.g}, ${planet.color.b}, ${adjustedGlowAlpha * 0.4})`);
         atmosphereGradient.addColorStop(1, `rgba(${planet.color.r}, ${planet.color.g}, ${planet.color.b}, 0)`);
         
         ctx.fillStyle = atmosphereGradient;
         ctx.beginPath();
         ctx.arc(x, y, atmosphereSize, 0, TWO_PI);
         ctx.fill();
-          // 繪製星球本體 - 星球本體始終完全不透明
+          
+        // 繪製星球本體 - 永遠清晰可見，但後方星球略暗
         ctx.globalCompositeOperation = 'source-over';
         const coreGradient = ctx.createRadialGradient(
             x - finalSize * 0.3, y - finalSize * 0.3, 0,
             x, y, finalSize
         );
         
-        // 星球本體不受遮擋影響，始終保持完全不透明
         const brightnessFactor = planet.isHovered ? 1.3 : 1;
-        coreGradient.addColorStop(0, `rgb(${Math.min(255, planet.color.r * 1.5 * brightnessFactor)}, ${Math.min(255, planet.color.g * 1.5 * brightnessFactor)}, ${Math.min(255, planet.color.b * 1.5 * brightnessFactor)})`);
-        coreGradient.addColorStop(0.6, `rgb(${Math.floor(planet.color.r * brightnessFactor)}, ${Math.floor(planet.color.g * brightnessFactor)}, ${Math.floor(planet.color.b * brightnessFactor)})`);
-        coreGradient.addColorStop(1, `rgb(${Math.floor(planet.color.r * 0.6 * brightnessFactor)}, ${Math.floor(planet.color.g * 0.6 * brightnessFactor)}, ${Math.floor(planet.color.b * 0.6 * brightnessFactor)})`);
+        const depthBrightnessFactor = isInBackground ? 0.75 : 1; // 後方星球稍微變暗但仍清晰
+        
+        const r = Math.min(255, planet.color.r * 1.5 * brightnessFactor * depthBrightnessFactor);
+        const g = Math.min(255, planet.color.g * 1.5 * brightnessFactor * depthBrightnessFactor);
+        const b = Math.min(255, planet.color.b * 1.5 * brightnessFactor * depthBrightnessFactor);
+        
+        coreGradient.addColorStop(0, `rgb(${r}, ${g}, ${b})`);
+        coreGradient.addColorStop(0.6, `rgb(${Math.floor(planet.color.r * brightnessFactor * depthBrightnessFactor)}, ${Math.floor(planet.color.g * brightnessFactor * depthBrightnessFactor)}, ${Math.floor(planet.color.b * brightnessFactor * depthBrightnessFactor)})`);
+        coreGradient.addColorStop(1, `rgb(${Math.floor(planet.color.r * 0.6 * brightnessFactor * depthBrightnessFactor)}, ${Math.floor(planet.color.g * 0.6 * brightnessFactor * depthBrightnessFactor)}, ${Math.floor(planet.color.b * 0.6 * brightnessFactor * depthBrightnessFactor)})`);
         
         ctx.fillStyle = coreGradient;
         ctx.beginPath();
         ctx.arc(x, y, finalSize, 0, TWO_PI);
         ctx.fill();
         
-        // 繪製星球上的文字標籤 - 文字也保持完全不透明
-        drawPlanetLabel(planet, x, y, finalSize, 1.0); // 文字始終不透明
-          // 儲存位置信息供點擊檢測使用（不受遮擋影響）
+        // 繪製星球上的文字標籤
+        drawPlanetLabel(planet, x, y, finalSize, 1.0);
+          
+        // 儲存位置信息供點擊檢測使用
         planet.screenX = x;
         planet.screenY = y;
         planet.screenRadius = finalSize;
-        planet.isClickable = true; // 始終可點擊
+        planet.isClickable = true;
     }
       function drawPlanetLabel(planet, x, y, size, alphaMultiplier = 1) {
         ctx.save();
@@ -590,9 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fillText(subText, x, subTextY);
         }
           ctx.restore();
-    }
-
-    function drawPlanetRings(planetIndex, centerX, centerY, isBackground) {
+    }    function drawPlanetRings(planetIndex, centerX, centerY, isBackground) {
         if (planetIndex >= planetRings.length) return;
         
         const planet = planets[planetIndex];
@@ -608,47 +625,39 @@ document.addEventListener('DOMContentLoaded', () => {
             // 更新星環星星的角度
             star.angleInRing += star.orbitSpeed;
             star.twinkle += star.twinkleSpeed;
-              // 計算星環星星相對於星球的位置
+              
+            // 計算星環星星相對於星球的位置
             const ringStarX = planetX + Math.cos(star.angleInRing + planet.angle * 0.1) * star.radius;
             const ringStarY = planetY + Math.sin(star.angleInRing + planet.angle * 0.1) * star.radius * 0.3; // 扁平的星環
             
-            // 重新計算星環星星的z位置（更準確的方法）
-            // 基於星球的z位置和星環星星在環中的位置
-            const ringAngleFromBlackHole = Math.atan2(ringStarY - centerY, ringStarX - centerX);
-            const planetAngleFromBlackHole = Math.atan2(planetY - centerY, planetX - centerX);
-            const ringOffsetAngle = star.angleInRing + planet.angle * 0.1;
+            // 計算星環星星的角度位置
+            // 星環星星的角度基於它在環中的角度和星球的軌道運動
+            const combinedAngle = star.angleInRing + planet.angle * 0.1 + planet.angle;
+            const starIsInBackground = Math.sin(combinedAngle) <= 0;
             
-            // 更準確的z位置計算
-            const starZPosition = planet.zPosition + Math.sin(ringOffsetAngle) * 0.3;
+            // 根據 isBackground 參數決定繪製哪些星環星星
+            if (isBackground && !starIsInBackground) continue;
+            if (!isBackground && starIsInBackground) continue;
             
             // 計算星環星星到黑洞中心的距離
             const starDistanceFromCenter = Math.sqrt((ringStarX - centerX) ** 2 + (ringStarY - centerY) ** 2);
             
-            // 決定是否應該在這個繪製階段顯示這顆星星
-            if (isBackground && starZPosition >= 0) continue;
-            if (!isBackground && starZPosition < 0) continue;
-              // 計算黑洞遮擋效果 - 對所有在後方的星環星星都進行遮擋檢查
+            // 計算黑洞遮擋效果 - 只對後方星環星星進行遮擋檢查
             let occlusionFactor = 1.0;
             
-            // 更嚴格的遮擋檢查：考慮星環星星的實际位置
-            if (starZPosition < 0) {
+            if (isBackground && starIsInBackground) {
                 if (starDistanceFromCenter < blackHoleRadius * 1.6) {
                     const maxOcclusionDistance = blackHoleRadius * 1.6;
                     const minOcclusionDistance = blackHoleRadius * 0.7;
                     
                     if (starDistanceFromCenter < minOcclusionDistance) {
-                        occlusionFactor = 0.01; // 幾乎完全遮擋
+                        occlusionFactor = 0.0; // 完全遮擋
                     } else {
                         const distanceRatio = (starDistanceFromCenter - minOcclusionDistance) / 
                                             (maxOcclusionDistance - minOcclusionDistance);
-                        occlusionFactor = 0.01 + (distanceRatio * 0.99);
+                        occlusionFactor = distanceRatio;
                     }
                 }
-            }
-            
-            // 即使在前方，也要檢查是否被黑洞邊緣遮擋
-            else if (starDistanceFromCenter < blackHoleRadius * 1.1) {
-                occlusionFactor = Math.max(0.05, (starDistanceFromCenter - blackHoleRadius * 0.8) / (blackHoleRadius * 0.3));
             }
             
             // 計算亮度
@@ -657,22 +666,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // 後方星環星星較暗
             if (isBackground) {
-                brightness *= 0.3;
+                brightness *= 0.4;
             }
             
-            // 根據z位置調整亮度
-            const depthBrightness = 0.6 + starZPosition * 0.4;
+            // 根據前後位置調整亮度
+            const depthBrightness = starIsInBackground ? 0.6 : 1.0;
             brightness *= depthBrightness;
-              // 應用遮擋效果
+              
+            // 應用遮擋效果
             brightness *= occlusionFactor;
             
-            // 額外檢查：如果星環星星非常接近黑洞中心，進一步降低亮度
-            if (starDistanceFromCenter < blackHoleRadius * 1.2) {
-                const extraOcclusionFactor = Math.max(0.01, (starDistanceFromCenter - blackHoleRadius * 0.7) / (blackHoleRadius * 0.5));
-                brightness *= extraOcclusionFactor;
-            }
-            
-            if (brightness < 0.01) {
+            if (brightness < 0.02) {
                 continue;
             }
             
@@ -689,7 +693,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isBackground) {
                 starSize *= 0.7;
             }
-            starSize *= (0.7 + starZPosition * 0.3);
+            if (starIsInBackground) {
+                starSize *= 0.8; // 後方星環星星略小
+            }
             
             ctx.beginPath();
             ctx.arc(ringStarX, ringStarY, starSize, 0, TWO_PI);
