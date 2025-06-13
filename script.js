@@ -250,8 +250,7 @@ class SpaceNavigation {
     initScrollSnap() {
         let isThrottled = false;
         let snapTimeout = null;
-        let userScrollIntent = false; // 追蹤用戶滾動意圖
-        let lastScrollDirection = null;
+        let userScrollIntent = false;
         let scrollStartTime = null;
         
         // 監聽滾動事件
@@ -274,25 +273,25 @@ class SpaceNavigation {
             
             clearTimeout(snapTimeout);
             
-            // 較長的延遲，讓用戶有時間查看內容
+            // 縮短延遲時間，讓吸附更敏感
             snapTimeout = setTimeout(() => {
                 if (!this.isScrolling) {
                     const scrollDuration = Date.now() - scrollStartTime;
-                    // 只有在快速滾動或停留時間短時才執行吸附
-                    if (scrollDuration < 500 || this.shouldSnapToSection()) {
+                    // 調整判斷邏輯，更容易觸發吸附
+                    if (scrollDuration < 800 || this.shouldSnapToSection()) {
                         this.snapToNearestSection();
                     }
                     scrollStartTime = null;
                     userScrollIntent = false;
                 }
-            }, 300); // 增加延遲時間
+            }, 150); // 縮短延遲時間，讓吸附更快
         }, { passive: true });
         
-        // 監聽滾動結束事件（現代瀏覽器支援）
+        // 監聽滾動結束事件
         if ('onscrollend' in window) {
             window.addEventListener('scrollend', () => {
                 const scrollDuration = scrollStartTime ? Date.now() - scrollStartTime : 0;
-                if (scrollDuration < 500 || this.shouldSnapToSection()) {
+                if (scrollDuration < 800 || this.shouldSnapToSection()) {
                     this.snapToNearestSection();
                 }
                 scrollStartTime = null;
@@ -311,41 +310,35 @@ class SpaceNavigation {
         const contentRect = contentArea.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
         
-        // 如果內容區域完全可見，不執行吸附
-        if (contentRect.top <= 0 && contentRect.bottom >= viewportHeight) {
-            return false;
+        // 調整判斷條件，讓吸附更容易觸發
+        // 只有當用戶明確在內容區域的中心位置時才跳過吸附
+        const isInContentCenter = contentRect.top <= viewportHeight * 0.1 && contentRect.bottom >= viewportHeight * 0.9;
+        
+        if (isInContentCenter) {
+            return false; // 只有在內容區域完全占滿視窗時才不吸附
         }
         
-        // 如果用戶明顯想要查看內容區域（滾動到內容區域中間），不執行吸附
-        const contentMiddle = contentArea.offsetTop + contentArea.offsetHeight / 2;
-        const distanceToContentMiddle = Math.abs(currentScrollTop + viewportHeight / 2 - contentMiddle);
-        
-        if (distanceToContentMiddle < viewportHeight * 0.3) {
-            return false; // 用戶正在查看內容區域
-        }
-        
-        return true; // 其他情況執行吸附
+        return true; // 其他情況都執行吸附
     }
     
     // 處理滾動事件
     handleScroll() {
         const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
         
-        // 降低滾動敏感度，避免過度觸發
-        if (Math.abs(currentScrollTop - this.lastScrollTop) < 5) {
+        // 提高滾動敏感度
+        if (Math.abs(currentScrollTop - this.lastScrollTop) < 3) {
             return;
         }
         
         this.lastScrollTop = currentScrollTop;
         this.isScrolling = true;
         
-        // 清除之前的timeout
         clearTimeout(this.scrollTimeout);
         
-        // 設置較長的滾動結束檢測時間
+        // 縮短滾動結束檢測時間
         this.scrollTimeout = setTimeout(() => {
             this.isScrolling = false;
-        }, 150);
+        }, 100);
     }
     
     // 定格到最近的區域
@@ -380,43 +373,48 @@ class SpaceNavigation {
             }
         ];
         
-        // 檢查當前是否在內容區域內
+        // 檢查當前是否在內容區域的正中心
         const contentRect = contentArea.getBoundingClientRect();
-        const isViewingContent = contentRect.top <= viewportHeight * 0.2 && contentRect.bottom >= viewportHeight * 0.8;
+        const isInContentCenter = contentRect.top <= viewportHeight * 0.1 && contentRect.bottom >= viewportHeight * 0.9;
         
-        if (isViewingContent) {
-            console.log('用戶正在查看內容，跳過吸附');
-            return; // 如果用戶正在查看內容區域，不執行吸附
+        if (isInContentCenter) {
+            console.log('用戶正在查看完整內容，跳過吸附');
+            return;
         }
         
-        // 找出最適合的吸附目標
+        // 找出最適合的吸附目標 - 使用更強的吸附邏輯
         let bestMatch = null;
         let minDistance = Infinity;
         
         sections.forEach(section => {
             const distance = Math.abs(currentScrollTop - section.top);
-            const threshold = viewportHeight * 0.4; // 增加閾值，減少強制吸附
+            const threshold = viewportHeight * 0.5; // 擴大閾值範圍
             
-            // 如果在合理範圍內且距離最近
             if (distance < threshold && distance < minDistance) {
                 minDistance = distance;
                 bestMatch = section;
             }
         });
         
-        // 如果沒有找到合適的吸附目標，不強制吸附
+        // 如果沒有在閾值內找到，找最近的區域
         if (!bestMatch) {
-            return;
+            sections.forEach(section => {
+                const distance = Math.abs(currentScrollTop - section.top);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    bestMatch = section;
+                }
+            });
         }
         
-        // 執行平滑滾動到目標位置，但只有在距離足夠大時
-        if (bestMatch && minDistance > 30) { // 增加最小距離閾值
+        // 執行吸附 - 降低最小距離要求
+        if (bestMatch && minDistance > 15) { // 降低最小距離閾值
             window.scrollTo({
                 top: bestMatch.top,
                 behavior: 'smooth'
             });
             
-            console.log(`吸附到 ${bestMatch.name} 區域`);
+            console.log(`吸附到 ${bestMatch.name} 區域 (距離: ${minDistance}px)`);
         }
     }
     
