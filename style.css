@@ -8,15 +8,14 @@ body {
     overflow-x: hidden;
     position: relative;
     min-height: 100vh;
-    /* 改善滾動吸附效果 */
+    /* 移除所有 scroll-snap，改用 JavaScript 控制 */
     scroll-behavior: smooth;
-    scroll-snap-type: y proximity; /* 改為 proximity 讓吸附更自然 */
 }
 
 /* 為主要區域添加scroll snap points */
 html {
     scroll-behavior: smooth;
-    scroll-snap-type: y proximity; /* 改為 proximity */
+    /* 移除 scroll-snap-type */
 }
 
 /* 每個主要section都成為snap point */
@@ -30,9 +29,7 @@ header {
     justify-content: space-between;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
     border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-    /* 改善吸附效果 */
-    scroll-snap-align: start;
-    scroll-snap-stop: normal; /* 改為 normal */
+    /* 移除 scroll-snap */
 }
 
 header .logo {
