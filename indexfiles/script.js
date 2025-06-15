@@ -218,6 +218,7 @@ document.addEventListener('DOMContentLoaded', initSkipButton);
     let textAnimationActive = false;
     let currentTextLine = 0;
     let textAppearFrames = 0;
+    let fixedFontSize = null; // 存儲基於第一行文字計算的固定字體大小
     const TEXT_FADE_IN_DURATION = 5;   // 淡入时间
     const TEXT_DISPLAY_DURATION = 35;   // 完全显示时间
     const TEXT_FADE_OUT_DURATION = 5;  // 淡出时间
@@ -267,6 +268,7 @@ document.addEventListener('DOMContentLoaded', initSkipButton);
     window.resizeHandler = () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        fixedFontSize = null; // 重置固定字體大小，讓它重新計算
     };
     window.addEventListener('resize', window.resizeHandler);
     function init(){
@@ -353,90 +355,100 @@ document.addEventListener('DOMContentLoaded', initSkipButton);
             return rotationSpeed;
         }
         
-        // 創建銀河系星星 - 重新設計螺旋臂結構以匹配圖片
+        // 創建銀河系星星 - 使用固定種子確保每次生成相同的銀河結構
         const maxRadius = Math.min(canvas.width, canvas.height) / 2 - 50;
+        
+        // 使用簡單的偽隨機數生成器，確保每次生成相同的銀河
+        let seed = 12345; // 固定種子
+        function seededRandom() {
+            seed = (seed * 9301 + 49297) % 233280;
+            return seed / 233280;
+        }
+        
         for(let i = 0; i < maxGalaxyStars; i++){
-            // 創建更密集的螺旋臂結構
-            const isInSpiralArm = Math.random() < 0.85; // 85%的星星在螺旋臂中
+            // 使用索引和固定邏輯來確定螺旋臂分布
+            const isInSpiralArm = (i % 100) < 85; // 85%的星星在螺旋臂中，但分布固定
             let orbitRadius, angle, armDensity = 1;
             
             if (isInSpiralArm) {
-                // 螺旋臂分布 - 創建多條螺旋臂形成更複雜的結構
-                const armIndex = Math.floor(Math.random() * 3); // 3條主要螺旋臂
+                // 螺旋臂分布 - 基於星星索引確定螺旋臂
+                const armIndex = i % 3; // 循環分配到3條螺旋臂
                 const armOffset = armIndex * (2 * Math.PI / 3); // 120度間隔
                 
-                // 螺旋臂密度區域
-                const armCore = Math.random() < 0.6; // 60%在螺旋臂核心
+                // 螺旋臂密度區域 - 基於索引而非隨機
+                const armCore = (i % 10) < 6; // 60%在螺旋臂核心
                 if (armCore) {
-                    orbitRadius = Math.random() * maxRadius * 0.75 + maxRadius * 0.15;
+                    orbitRadius = (seededRandom() * 0.6 + 0.15) * maxRadius; // 0.15-0.75的範圍
                     armDensity = 2; // 螺旋臂核心更密集
                 } else {
-                    orbitRadius = Math.random() * maxRadius * 0.9 + maxRadius * 0.05;
+                    orbitRadius = (seededRandom() * 0.85 + 0.05) * maxRadius; // 0.05-0.9的範圍
                     armDensity = 1.5;
                 }
                 
                 // 更緊密的螺旋結構
-                const spiralTightness = 4.5; // 增加螺旋緊密度
+                const spiralTightness = 4.5; // 螺旋緊密度
                 const baseAngle = (orbitRadius / maxRadius) * spiralTightness * Math.PI + armOffset;
-                angle = baseAngle + (Math.random() - 0.5) * 0.6; // 減少隨機偏移
+                angle = baseAngle + (seededRandom() - 0.5) * 0.6; // 使用種子隨機減少變化
             } else {
-                // 暈部分 - 更廣泛分布
-                orbitRadius = Math.random() * maxRadius;
-                angle = Math.random() * Math.PI * 2;
+                // 暈部分 - 更規律的分布
+                orbitRadius = seededRandom() * maxRadius;
+                angle = (i / maxGalaxyStars) * Math.PI * 8; // 基於索引的角度分布
                 armDensity = 0.5;
             }
             
-            // 根據距離中心的位置決定星星顏色 - 減少粉色，最大顏色限制為紫色
+            // 根據距離中心的位置決定星星顏色 - 使用固定的顏色分布
             const distanceRatio = orbitRadius / maxRadius; // 0 = 中心, 1 = 外圍
             let hue, saturation, lightness;
             
+            // 使用更固定的顏色範圍，減少隨機變化
             if (distanceRatio < 0.15) {
                 // 核心區域：更亮的白色/淡黃色 (中心最亮)
-                hue = 50 + Math.random() * 20; // 淡黃白色範圍
-                saturation = Math.random() * 10; // 很低飽和度，更偏白色
-                lightness = 70 + Math.random() * 20; // 大幅提高亮度 (70-90)
+                hue = 50 + (seededRandom() * 20); // 淡黃白色範圍，但使用種子隨機
+                saturation = seededRandom() * 10; // 很低飽和度，更偏白色
+                lightness = 70 + seededRandom() * 20; // 亮度範圍
             } else if (distanceRatio < 0.35) {
                 // 內圈區域：淡藍紫色
-                hue = 250 + Math.random() * 30; // 藍紫色範圍 (250-280)
-                saturation = 25 + Math.random() * 20; // 降低飽和度
-                lightness = 45 + Math.random() * 15; // 亮度
+                hue = 250 + (seededRandom() * 30); // 藍紫色範圍
+                saturation = 25 + seededRandom() * 20;
+                lightness = 45 + seededRandom() * 15;
             } else if (distanceRatio < 0.55) {
                 // 中圈區域：藍紫色
-                hue = 240 + Math.random() * 30; // 藍紫色範圍 (240-270)
-                saturation = 45 + Math.random() * 30; // 中等飽和度
-                lightness = 40 + Math.random() * 15; // 亮度
+                hue = 240 + (seededRandom() * 30); // 藍紫色範圍
+                saturation = 45 + seededRandom() * 30;
+                lightness = 40 + seededRandom() * 15;
             } else if (distanceRatio < 0.75) {
                 // 外中圈：深藍紫色
-                hue = 230 + Math.random() * 30; // 深藍紫色範圍 (230-260)
-                saturation = 55 + Math.random() * 25; // 高飽和度
-                lightness = 35 + Math.random() * 15; // 亮度
+                hue = 230 + (seededRandom() * 30); // 深藍紫色範圍
+                saturation = 55 + seededRandom() * 25;
+                lightness = 35 + seededRandom() * 15;
             } else {
                 // 最外圈：深藍色
-                hue = 210 + Math.random() * 30; // 深藍色範圍 (210-240)
-                saturation = 60 + Math.random() * 25; // 高飽和度
-                lightness = 30 + Math.random() * 15; // 亮度
+                hue = 210 + (seededRandom() * 30); // 深藍色範圍
+                saturation = 60 + seededRandom() * 25;
+                lightness = 30 + seededRandom() * 15;
             }
             
-            // 在螺旋臂中的星星更亮更飽和 - 減少增強效果
+            // 在螺旋臂中的星星更亮更飽和 - 使用固定增強值
             if (isInSpiralArm) {
-                lightness = Math.min(70, lightness + 3 * armDensity); // 減少亮度增強 (原本+8，現在+3)
-                saturation = Math.min(85, saturation + 5 * armDensity); // 減少飽和度增強 (原本+10，現在+5)
+                lightness = Math.min(70, lightness + 3 * armDensity);
+                saturation = Math.min(85, saturation + 5 * armDensity);
             }
             
             galaxyStars.push({
                 orbitRadius: orbitRadius,
-                radius: Math.random() * (60 - orbitRadius / 15) / 15 + orbitRadius / 20, // 縮小星星尺寸
+                radius: Math.random() * (60 - orbitRadius / 15) / 15 + orbitRadius / 20, // 恢復原來的固定大小
                 orbitX: 0, // 設為0，因為會在變換後的座標系中繪製
                 orbitY: 0, // 設為0，因為會在變換後的座標系中繪製
                 timePassed: angle, // 使用計算出的角度作為初始位置
                 // 真實銀河旋轉速度 - 基於銀河旋轉曲線
                 speed: calculateGalaxyRotationSpeed(orbitRadius, maxRadius),
-                alpha: (Math.random() * 4 + 2) / 10 * armDensity, // 增加透明度範圍：從(1-4)/10改為(2-6)/10
+                alpha: (seededRandom() * 4 + 2) / 10 * armDensity, // 使用種子隨機但保持範圍
                 starTexture: createStarTexture(hue, saturation, lightness),
                 isInSpiralArm: isInSpiralArm,
                 armDensity: armDensity
             });
         }
+        
         phase='meteors';frame=0;explosionFrames=0;travelFrames=0;galaxyFrames=0;
         requestAnimationFrame(draw);
     }
@@ -470,8 +482,11 @@ document.addEventListener('DOMContentLoaded', initSkipButton);
         // 应用自转旋转
         ctx.rotate(meteor.rotation);
         
-        // 绘制陨石图片
-        const imageSize = 100; // 增加陨石图片大小 (从60增加到100)
+        // 根據螢幕寬度動態調整隕石大小
+        const baseMeteorSize = 150; // 從100增加到150
+        const dynamicMeteorSize = baseMeteorSize * (canvas.width / 1920); // 以1920px為基準
+        const imageSize = Math.max(60, Math.min(dynamicMeteorSize, canvas.width * 0.12)); // 最小從40增加到60，最大從8%增加到12%
+        
         ctx.drawImage(image, -imageSize/2, -imageSize/2, imageSize, imageSize);
         
         ctx.restore();
@@ -482,7 +497,10 @@ document.addEventListener('DOMContentLoaded', initSkipButton);
 
     // 簡化的隕石繪製函數 - 只显示旋转的圆形陨石
     function drawDefaultMeteor(meteor) {
-        const headRadius = 50; // 增加陨石大小 (从30增加到50)
+        // 根據螢幕寬度動態調整隕石大小
+        const baseMeteorRadius = 75; // 從50增加到75
+        const dynamicMeteorRadius = baseMeteorRadius * (canvas.width / 1920); // 以1920px為基準
+        const headRadius = Math.max(30, Math.min(dynamicMeteorRadius, canvas.width * 0.06)); // 最小從20增加到30，最大從4%增加到6%
         
         ctx.save();
         
@@ -1273,10 +1291,29 @@ document.addEventListener('DOMContentLoaded', initSkipButton);
     function drawTechText(text, x, y, alpha, scale, lineIndex) {
         ctx.save();
         ctx.translate(x, y);
-        ctx.scale(scale, scale);
         
-        // 文字樣式設定
-        const fontSize = 36;
+        // 如果還沒計算固定字體大小，使用第一行文字來計算
+        if (fixedFontSize === null) {
+            // 計算銀河寬度作為參考
+            const galaxyRadius = Math.min(canvas.width, canvas.height) / 2 - 50;
+            const galaxyWidth = galaxyRadius * 2;
+            
+            // 使用第一行文字來計算字體大小
+            const firstLineText = MYSTERIOUS_TEXT[0];
+            const baseFontSize = 36;
+            ctx.font = `${baseFontSize}px 'Courier New', monospace`;
+            const baseTextMetrics = ctx.measureText(firstLineText);
+            const baseTextWidth = baseTextMetrics.width;
+            
+            // 計算需要的字體大小，讓第一行文字寬度等於銀河寬度的 80%
+            const targetWidth = galaxyWidth * 0.8;
+            const fontSizeRatio = targetWidth / baseTextWidth;
+            fixedFontSize = Math.max(16, Math.min(baseFontSize * fontSizeRatio, canvas.width * 0.1)); // 限制最大字體
+        }
+        
+        // 應用動畫縮放到固定字體大小
+        const fontSize = fixedFontSize * scale;
+        
         ctx.font = `${fontSize}px 'Courier New', monospace`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -1387,8 +1424,10 @@ document.addEventListener('DOMContentLoaded', initSkipButton);
             
             frame++; // 增加幀計數器用於動畫效果
             const d=Math.hypot(meteors[0].x-meteors[1].x,meteors[0].y-meteors[1].y);
-            // 精确的碰撞检测：陨石半径是50像素，所以两个陨石中心距离100像素时就碰撞了
-            const meteorRadius = 50; // 陨石半径 (更新为50)
+            // 動態碰撞檢測：根據螢幕寬度調整隕石半徑
+            const baseMeteorRadius = 75; // 從50增加到75，與繪製大小一致
+            const dynamicMeteorRadius = baseMeteorRadius * (canvas.width / 1920); // 以1920px為基準
+            const meteorRadius = Math.max(30, Math.min(dynamicMeteorRadius, canvas.width * 0.06)); // 與繪製大小一致
             const collisionDistance = meteorRadius * 2; // 两个陨石半径之和
             if(d < collisionDistance){phase='explosion';}
         } else if(phase==='explosion'){
@@ -1541,13 +1580,13 @@ document.addEventListener('DOMContentLoaded', initSkipButton);
             for (let arm = 0; arm < 3; arm++) {
                 const armOffset = arm * (2 * Math.PI / 3); // 恢復120度間隔
                 
-                // 適度減少星云密度
-                for (let radius = 40; radius < maxRadius; radius += 50) { // 從35增加到50
+                // 適中的星雲密度
+                for (let radius = 40; radius < maxRadius; radius += 45) { // 從30/35調整到40/45，減少密度
                     const spiralAngle = (radius / maxRadius) * 4.5 * Math.PI + armOffset + (galaxyFrames * 0.002);
                     
-                    // 恢復2個星云團但減少一些計算
-                    for (let offset = 0; offset < 2; offset++) {
-                        const offsetAngle = spiralAngle + offset * 0.4;
+                    // 減少星雲團數量
+                    for (let offset = 0; offset < 2; offset++) { // 從3個減少到2個星雲團
+                        const offsetAngle = spiralAngle + offset * 0.4; // 增加間隔從0.3到0.4
                         const x = Math.cos(offsetAngle) * radius;
                         const y = Math.sin(offsetAngle) * radius;
                         
@@ -1559,34 +1598,35 @@ document.addEventListener('DOMContentLoaded', initSkipButton);
                             nebulaHue = 50; // 中心黃白色
                             nebulaSaturation = 30;
                             nebulaLightness = 75;
-                            nebulaSize = 100;
+                            nebulaSize = 100; // 從120減少到100
                         } else if (distanceRatio < 0.4) {
                             nebulaHue = 260; // 藍紫色
                             nebulaSaturation = 60;
                             nebulaLightness = 60;
-                            nebulaSize = 85;
+                            nebulaSize = 85; // 從105減少到85
                         } else if (distanceRatio < 0.6) {
                             nebulaHue = 240; // 藍紫色
                             nebulaSaturation = 70;
                             nebulaLightness = 50;
-                            nebulaSize = 75;
+                            nebulaSize = 75; // 從90減少到75
                         } else if (distanceRatio < 0.8) {
                             nebulaHue = 230; // 深藍紫色
                             nebulaSaturation = 75;
                             nebulaLightness = 40;
-                            nebulaSize = 65;
+                            nebulaSize = 65; // 從80減少到65
                         } else {
                             nebulaHue = 220; // 深藍色
                             nebulaSaturation = 80;
                             nebulaLightness = 35;
-                            nebulaSize = 55;
+                            nebulaSize = 55; // 從70減少到55
                         }
                         
-                        // 恢復較自然的星云效果 - 增加亮度
+                        // 適度的星雲效果 - 平衡亮度和層次
                         const nebulaGradient = ctx.createRadialGradient(x, y, 0, x, y, nebulaSize);
-                        nebulaGradient.addColorStop(0, `hsla(${nebulaHue}, ${nebulaSaturation}%, ${nebulaLightness}%, 0.35)`); // 從0.18增加到0.35
-                        nebulaGradient.addColorStop(0.3, `hsla(${nebulaHue}, ${nebulaSaturation}%, ${nebulaLightness - 5}%, 0.25)`); // 從0.12增加到0.25
-                        nebulaGradient.addColorStop(0.6, `hsla(${nebulaHue}, ${nebulaSaturation}%, ${nebulaLightness - 10}%, 0.15)`); // 從0.06增加到0.15
+                        nebulaGradient.addColorStop(0, `hsla(${nebulaHue}, ${nebulaSaturation}%, ${nebulaLightness}%, 0.4)`); // 從0.6減少到0.4
+                        nebulaGradient.addColorStop(0.3, `hsla(${nebulaHue}, ${nebulaSaturation}%, ${nebulaLightness - 5}%, 0.3)`); // 從0.5減少到0.3
+                        nebulaGradient.addColorStop(0.6, `hsla(${nebulaHue}, ${nebulaSaturation}%, ${nebulaLightness - 10}%, 0.2)`); // 從0.4減少到0.2
+                        nebulaGradient.addColorStop(0.8, `hsla(${nebulaHue}, ${nebulaSaturation}%, ${nebulaLightness - 15}%, 0.1)`); // 從0.25減少到0.1
                         nebulaGradient.addColorStop(1, 'transparent');
                         
                         ctx.fillStyle = nebulaGradient;
@@ -1596,6 +1636,46 @@ document.addEventListener('DOMContentLoaded', initSkipButton);
                     }
                 }
             }
+            
+            // 添加輕微的背景星雲層 - 更淡的星雲效果
+            ctx.globalCompositeOperation = 'screen';
+            for (let arm = 0; arm < 3; arm++) {
+                const armOffset = arm * (2 * Math.PI / 3);
+                for (let radius = 80; radius < maxRadius * 0.8; radius += 100) { // 增加間距，減少數量
+                    const spiralAngle = (radius / maxRadius) * 4.5 * Math.PI + armOffset + (galaxyFrames * 0.001);
+                    const x = Math.cos(spiralAngle) * radius;
+                    const y = Math.sin(spiralAngle) * radius;
+                    
+                    const distanceRatio = radius / maxRadius;
+                    let bgNebulaHue, bgNebulaSaturation, bgNebulaLightness;
+                    
+                    if (distanceRatio < 0.3) {
+                        bgNebulaHue = 260;
+                        bgNebulaSaturation = 30; // 從40減少到30
+                        bgNebulaLightness = 40; // 從50減少到40
+                    } else if (distanceRatio < 0.6) {
+                        bgNebulaHue = 240;
+                        bgNebulaSaturation = 35; // 從50減少到35
+                        bgNebulaLightness = 30; // 從40減少到30
+                    } else {
+                        bgNebulaHue = 220;
+                        bgNebulaSaturation = 40; // 從60減少到40
+                        bgNebulaLightness = 25; // 從30減少到25
+                    }
+                    
+                    const bgNebulaSize = 120 + (radius / maxRadius) * 30; // 從150+50減少到120+30
+                    const bgNebulaGradient = ctx.createRadialGradient(x, y, 0, x, y, bgNebulaSize);
+                    bgNebulaGradient.addColorStop(0, `hsla(${bgNebulaHue}, ${bgNebulaSaturation}%, ${bgNebulaLightness}%, 0.1)`); // 從0.15減少到0.1
+                    bgNebulaGradient.addColorStop(0.5, `hsla(${bgNebulaHue}, ${bgNebulaSaturation}%, ${bgNebulaLightness - 10}%, 0.05)`); // 從0.08減少到0.05
+                    bgNebulaGradient.addColorStop(1, 'transparent');
+                    
+                    ctx.fillStyle = bgNebulaGradient;
+                    ctx.beginPath();
+                    ctx.arc(x, y, bgNebulaSize, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            }
+            ctx.globalCompositeOperation = 'source-over';
             
             // 繪製銀河系星星（在星云之後，核心之前）
             ctx.globalCompositeOperation = 'lighter';
