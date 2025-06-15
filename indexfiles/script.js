@@ -3,6 +3,85 @@ function skipToHome() {
     window.location.href = 'home.html';
 }
 
+// Skip按钮躲避功能
+let skipButton;
+let isEvading = false;
+let currentCorner = 0; // 0=右上, 1=左上, 2=左下, 3=右下
+const corners = [
+    { top: '20px', right: '20px', left: 'auto', bottom: 'auto' }, // 右上
+    { top: '20px', left: '20px', right: 'auto', bottom: 'auto' }, // 左上
+    { bottom: '20px', left: '20px', right: 'auto', top: 'auto' }, // 左下
+    { bottom: '20px', right: '20px', left: 'auto', top: 'auto' }  // 右下
+];
+
+function initSkipButton() {
+    skipButton = document.getElementById('skipButton');
+    if (skipButton) {
+        // 监听鼠标移动事件
+        document.addEventListener('mousemove', handleMouseMove);
+        
+        // 阻止按钮上的hover效果触发躲避
+        skipButton.addEventListener('mouseenter', function(e) {
+            e.stopPropagation();
+        });
+    }
+}
+
+function handleMouseMove(e) {
+    if (!skipButton || isEvading) return;
+    
+    const buttonRect = skipButton.getBoundingClientRect();
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+    
+    // 计算鼠标与按钮中心的距离
+    const buttonCenterX = buttonRect.left + buttonRect.width / 2;
+    const buttonCenterY = buttonRect.top + buttonRect.height / 2;
+    const distance = Math.sqrt(
+        Math.pow(mouseX - buttonCenterX, 2) + 
+        Math.pow(mouseY - buttonCenterY, 2)
+    );
+    
+    // 如果鼠标距离按钮太近（80像素内），按钮就逃跑
+    if (distance < 80) {
+        evadeToRandomCorner();
+    }
+}
+
+function evadeToRandomCorner() {
+    if (isEvading) return;
+    
+    isEvading = true;
+    
+    // 随机选择一个不是当前位置的角落
+    let newCorner;
+    do {
+        newCorner = Math.floor(Math.random() * 4);
+    } while(newCorner === currentCorner);
+    
+    currentCorner = newCorner;
+    const newPosition = corners[currentCorner];
+    
+    // 应用新位置
+    Object.keys(newPosition).forEach(key => {
+        skipButton.style[key] = newPosition[key];
+    });
+    
+    // 添加一个小的抖动效果
+    skipButton.style.transform = 'scale(0.9) rotate(5deg)';
+    
+    // 500毫秒后恢复正常状态，允许下次躲避
+    setTimeout(() => {
+        skipButton.style.transform = 'scale(1) rotate(0deg)';
+        setTimeout(() => {
+            isEvading = false;
+        }, 100);
+    }, 500);
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', initSkipButton);
+
 // Overwrite entire file with improved animation script
 (function(){
     const canvas = document.getElementById('meteorCanvas');
@@ -22,44 +101,40 @@ function skipToHome() {
     // Sparkles system for meteors
     let sparkles = [];
     
-    // Sparkle class
+    // 简化的Sparkle类 - 性能优化版本
     class Sparkle {
         constructor(x, y, vx, vy) {
             this.x = x;
             this.y = y;
-            // 火花朝移动方向的相反方向喷射
+            // 火花朝移动方向的相反方向喷射 - 简化计算
             const speed = Math.sqrt(vx * vx + vy * vy);
             if (speed > 0) {
                 const dirX = vx / speed;
                 const dirY = vy / speed;
                 
-                // 主要朝反方向，加上一些随机扩散
-                const backSpeed = speed * (0.3 + Math.random() * 0.4); // 30%-70%的反向速度
-                const randomAngle = (Math.random() - 0.5) * Math.PI * 0.5; // ±45度的随机角度
-                
-                this.vx = -dirX * backSpeed * Math.cos(randomAngle) - dirY * backSpeed * Math.sin(randomAngle);
-                this.vy = -dirY * backSpeed * Math.cos(randomAngle) + dirX * backSpeed * Math.sin(randomAngle);
+                // 简化：直接反向，减少复杂计算
+                const backSpeed = speed * 0.5;
+                this.vx = -dirX * backSpeed + (Math.random() - 0.5) * 2;
+                this.vy = -dirY * backSpeed + (Math.random() - 0.5) * 2;
             } else {
                 this.vx = (Math.random() - 0.5) * 2;
                 this.vy = (Math.random() - 0.5) * 2;
             }
             
-            this.life = 1.0; // 生命值从1到0
-            this.decay = 0.008 + Math.random() * 0.012; // 进一步减慢衰减速度，让火花持续更久
-            this.size = 6 + Math.random() * 12; // 大幅增加火花大小 (从6-14增加到12-28)
-            this.color = Math.random() < 0.3 ? 'white' : (Math.random() < 0.6 ? 'orange' : 'yellow'); // 添加白色火花
-            this.twinkle = Math.random() * Math.PI * 2; // 闪烁相位
+            this.life = 1.0;
+            this.decay = 0.015; // 更快衰减以减少粒子数量
+            this.size = 4 + Math.random() * 6; // 减小火花大小
+            this.color = Math.random() < 0.5 ? 'orange' : 'yellow'; // 去掉白色减少计算
         }
         
         update() {
             this.x += this.vx;
             this.y += this.vy;
             this.life -= this.decay;
-            this.twinkle += 0.3;
             
-            // 移除重力效果，只添加轻微的空气阻力
-            this.vx *= 0.98;
-            this.vy *= 0.98;
+            // 简化：去掉复杂的物理效果
+            this.vx *= 0.99;
+            this.vy *= 0.99;
             
             return this.life > 0;
         }
@@ -68,41 +143,25 @@ function skipToHome() {
             if (this.life <= 0) return;
             
             ctx.save();
-            ctx.globalAlpha = this.life * (0.7 + 0.3 * Math.sin(this.twinkle)); // 增加基础透明度
+            ctx.globalAlpha = this.life;
             
-            // 绘制更大更长的星形火花
+            // 简化的十字星形绘制
             ctx.translate(this.x, this.y);
             ctx.fillStyle = this.color;
             
-            // 绘制更粗更长的十字星形
             const size = this.size * this.life;
-            const thickness = Math.max(3, size * 0.25); // 增加厚度
-            const length = size * 1.5; // 增加长度倍数
-            ctx.fillRect(-length/2, -thickness/2, length, thickness);
-            ctx.fillRect(-thickness/2, -length/2, thickness, length);
+            const thickness = 2;
             
-            // 绘制更粗更长的对角线
-            ctx.rotate(Math.PI / 4);
-            const diagonalLength = length * 0.9; // 对角线也增加长度
-            const diagonalThickness = Math.max(2, size * 0.2);
-            ctx.fillRect(-diagonalLength/2, -diagonalThickness/2, diagonalLength, diagonalThickness);
-            ctx.fillRect(-diagonalThickness/2, -diagonalLength/2, diagonalThickness, diagonalLength);
-            
-            // 添加更大的光晕效果
-            ctx.globalAlpha = this.life * 0.3;
-            ctx.fillStyle = 'white';
-            const glowLength = length * 1.3; // 光晕也增加长度
-            const glowThickness = Math.max(2, thickness * 0.8);
-            ctx.rotate(-Math.PI / 4); // 恢复旋转
-            ctx.fillRect(-glowLength/2, -glowThickness/2, glowLength, glowThickness);
-            ctx.fillRect(-glowThickness/2, -glowLength/2, glowThickness, glowLength);
+            // 只绘制基本十字形，去掉复杂的旋转和光晕
+            ctx.fillRect(-size/2, -thickness/2, size, thickness);
+            ctx.fillRect(-thickness/2, -size/2, thickness, size);
             
             ctx.restore();
         }
     }
     
-    // 创建火花的函数
-    function createSparkles(x, y, vx, vy, count = 6) { // 增加默认数量从3到6
+    // 创建火花的函数 - 优化版本
+    function createSparkles(x, y, vx, vy, count = 3) { // 从6减少到3个火花
         // 计算陨石移动方向的反方向
         const speed = Math.sqrt(vx * vx + vy * vy);
         if (speed === 0) return; // 如果陨石不移动，不生成火花
@@ -142,11 +201,11 @@ function skipToHome() {
         });
     }
     
-    // Travel
+    // Travel - 优化：减少星星数量
     let stars = [];
-    const STAR_COUNT = 4000;
+    const STAR_COUNT = 1500; // 从4000减少到1500
     
-    // Galaxy
+    // Galaxy - 优化：减少星系星星数量
     let galaxyStars = [];
     const GALAXY_SCALE_DURATION = 250;
     
@@ -242,9 +301,9 @@ function skipToHome() {
                 pz:0
             });
         }
-        // Galaxy - 創建逼真的銀河系效果
+        // Galaxy - 創建逼真的銀河系效果 - 优化版本
         galaxyStars = [];
-        const maxGalaxyStars = 2500; // 減少星星數量以提升性能
+        const maxGalaxyStars = 1200; // 從2500大幅減少到1200以提升性能
         
         // 創建不同顏色的星星紋理 - 降低亮度
         function createStarTexture(hue, saturation, lightness) {
@@ -372,7 +431,7 @@ function skipToHome() {
                 timePassed: angle, // 使用計算出的角度作為初始位置
                 // 真實銀河旋轉速度 - 基於銀河旋轉曲線
                 speed: calculateGalaxyRotationSpeed(orbitRadius, maxRadius),
-                alpha: (Math.random() * 3 + 1) / 10 * armDensity, // 降低透明度範圍
+                alpha: (Math.random() * 4 + 2) / 10 * armDensity, // 增加透明度範圍：從(1-4)/10改為(2-6)/10
                 starTexture: createStarTexture(hue, saturation, lightness),
                 isInSpiralArm: isInSpiralArm,
                 armDensity: armDensity
@@ -384,9 +443,9 @@ function skipToHome() {
     
     // Function to draw a single meteor
     function drawMeteor(meteor) {
-        // 先绘制火花（在陨石后方）
-        if (phase === 'meteors' && Math.random() < 0.6) { // 从30%增加到60%概率生成火花
-            createSparkles(meteor.x, meteor.y, meteor.dx, meteor.dy, 4); // 每次生成4个火花
+        // 先绘制火花（在陨石后方） - 优化：减少火花生成频率
+        if (phase === 'meteors' && Math.random() < 0.3) { // 从60%降低到30%概率生成火花
+            createSparkles(meteor.x, meteor.y, meteor.dx, meteor.dy, 2); // 每次生成2个火花，从4个减少
         }
         
         // 然后绘制陨石（在火花前方）
@@ -966,24 +1025,25 @@ function skipToHome() {
     }
 
     // 繪製銀河系星星的函數 - 增強螺旋臂效果
+    // 優化的銀河系星星绘制函数 - 保持視覺效果但提升性能
     function drawGalaxyStar(star) {
         const x = Math.sin(star.timePassed) * star.orbitRadius + star.orbitX;
         const y = Math.cos(star.timePassed) * star.orbitRadius + star.orbitY;
-        const twinkle = Math.floor(Math.random() * 10);
         
-        // 星星閃爍效果
+        // 簡化但保留閃爍效果
+        const twinkle = Math.floor(Math.random() * 10);
         if (twinkle === 1 && star.alpha > 0.1) {
             star.alpha -= 0.02;
         } else if (twinkle === 2 && star.alpha < 0.7) {
             star.alpha += 0.02;
         }
         
-        // 如果是螺旋臂中的星星，添加額外光暈 - 降低光暈亮度
-        if (star.isInSpiralArm && star.armDensity > 1) {
-            const glowSize = star.radius * 2;
+        // 只對較大的螺旋臂星星繪製光暈，減少計算量 - 增加亮度
+        if (star.isInSpiralArm && star.armDensity > 1 && star.radius > 4) {
+            const glowSize = star.radius * 2.2; // 增加光暈大小
             const glowGradient = ctx.createRadialGradient(x, y, 0, x, y, glowSize);
-            glowGradient.addColorStop(0, `hsla(300, 80%, 40%, ${star.alpha * 0.15})`); // 降低亮度和透明度
-            glowGradient.addColorStop(0.5, `hsla(280, 70%, 30%, ${star.alpha * 0.08})`); // 降低亮度和透明度
+            glowGradient.addColorStop(0, `hsla(300, 80%, 40%, ${star.alpha * 0.25})`); // 大幅增加亮度
+            glowGradient.addColorStop(0.5, `hsla(280, 70%, 30%, ${star.alpha * 0.15})`); // 增加亮度
             glowGradient.addColorStop(1, 'transparent');
             
             ctx.fillStyle = glowGradient;
@@ -992,6 +1052,7 @@ function skipToHome() {
             ctx.fill();
         }
         
+        // 恢復使用星星紋理，但保持優化
         ctx.globalAlpha = star.alpha;
         ctx.drawImage(star.starTexture, 
                      x - star.radius / 2, 
@@ -1473,59 +1534,59 @@ function skipToHome() {
             ctx.translate(canvas.width / 2, canvas.height / 2);
             ctx.scale(scale, scale);
             
-            // 創建更流動的螺旋星云效果
+            // 恢復自然的螺旋星云效果 - 保持性能優化
             const maxRadius = Math.min(canvas.width, canvas.height) / 2;
             
-            // 主要螺旋星云背景 - 3條螺旋臂
+            // 恢復3條螺旋臂，但減少密度
             for (let arm = 0; arm < 3; arm++) {
-                const armOffset = arm * (2 * Math.PI / 3);
+                const armOffset = arm * (2 * Math.PI / 3); // 恢復120度間隔
                 
-                // 創建連續的螺旋臂星云 - 減少密度以提升性能
-                for (let radius = 40; radius < maxRadius; radius += 35) { // 增加間距
+                // 適度減少星云密度
+                for (let radius = 40; radius < maxRadius; radius += 50) { // 從35增加到50
                     const spiralAngle = (radius / maxRadius) * 4.5 * Math.PI + armOffset + (galaxyFrames * 0.002);
                     
-                    // 創建沿螺旋臂的星云團 - 減少數量
-                    for (let offset = 0; offset < 2; offset++) { // 從3減少到2
+                    // 恢復2個星云團但減少一些計算
+                    for (let offset = 0; offset < 2; offset++) {
                         const offsetAngle = spiralAngle + offset * 0.4;
                         const x = Math.cos(offsetAngle) * radius;
                         const y = Math.sin(offsetAngle) * radius;
                         
-                        // 根據距離決定星云顏色 - 藍紫色調
+                        // 簡化但保持自然的顏色變化
                         const distanceRatio = radius / maxRadius;
                         let nebulaHue, nebulaSaturation, nebulaLightness, nebulaSize;
                         
                         if (distanceRatio < 0.2) {
                             nebulaHue = 50; // 中心黃白色
                             nebulaSaturation = 30;
-                            nebulaLightness = 85; // 提高亮度
-                            nebulaSize = 120;
+                            nebulaLightness = 75;
+                            nebulaSize = 100;
                         } else if (distanceRatio < 0.4) {
                             nebulaHue = 260; // 藍紫色
                             nebulaSaturation = 60;
-                            nebulaLightness = 65;
-                            nebulaSize = 100;
+                            nebulaLightness = 60;
+                            nebulaSize = 85;
                         } else if (distanceRatio < 0.6) {
                             nebulaHue = 240; // 藍紫色
                             nebulaSaturation = 70;
-                            nebulaLightness = 55;
-                            nebulaSize = 90;
+                            nebulaLightness = 50;
+                            nebulaSize = 75;
                         } else if (distanceRatio < 0.8) {
                             nebulaHue = 230; // 深藍紫色
                             nebulaSaturation = 75;
-                            nebulaLightness = 45;
-                            nebulaSize = 80;
+                            nebulaLightness = 40;
+                            nebulaSize = 65;
                         } else {
                             nebulaHue = 220; // 深藍色
                             nebulaSaturation = 80;
-                            nebulaLightness = 40;
-                            nebulaSize = 70;
+                            nebulaLightness = 35;
+                            nebulaSize = 55;
                         }
                         
-                        // 繪製更強烈的星云效果
+                        // 恢復較自然的星云效果 - 增加亮度
                         const nebulaGradient = ctx.createRadialGradient(x, y, 0, x, y, nebulaSize);
-                        nebulaGradient.addColorStop(0, `hsla(${nebulaHue}, ${nebulaSaturation}%, ${nebulaLightness}%, 0.2)`);
-                        nebulaGradient.addColorStop(0.3, `hsla(${nebulaHue}, ${nebulaSaturation}%, ${nebulaLightness - 5}%, 0.15)`);
-                        nebulaGradient.addColorStop(0.6, `hsla(${nebulaHue}, ${nebulaSaturation}%, ${nebulaLightness - 10}%, 0.08)`);
+                        nebulaGradient.addColorStop(0, `hsla(${nebulaHue}, ${nebulaSaturation}%, ${nebulaLightness}%, 0.35)`); // 從0.18增加到0.35
+                        nebulaGradient.addColorStop(0.3, `hsla(${nebulaHue}, ${nebulaSaturation}%, ${nebulaLightness - 5}%, 0.25)`); // 從0.12增加到0.25
+                        nebulaGradient.addColorStop(0.6, `hsla(${nebulaHue}, ${nebulaSaturation}%, ${nebulaLightness - 10}%, 0.15)`); // 從0.06增加到0.15
                         nebulaGradient.addColorStop(1, 'transparent');
                         
                         ctx.fillStyle = nebulaGradient;
@@ -1543,14 +1604,14 @@ function skipToHome() {
             });
             ctx.globalCompositeOperation = 'source-over';
             
-            // 增強的中心核心 - 更亮更大，藍紫色調
+            // 增強的中心核心 - 更亮更大，藍紫色調 - 大幅增加亮度
             const coreGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 200);
-            coreGradient.addColorStop(0, 'hsla(55, 100%, 98%, 0.9)'); // 更亮的中心
-            coreGradient.addColorStop(0.1, 'hsla(50, 95%, 90%, 0.8)'); // 更亮
-            coreGradient.addColorStop(0.2, 'hsla(260, 70%, 75%, 0.6)'); // 藍紫色
-            coreGradient.addColorStop(0.4, 'hsla(250, 75%, 65%, 0.5)'); // 藍紫色
-            coreGradient.addColorStop(0.6, 'hsla(240, 70%, 55%, 0.4)'); // 藍紫色
-            coreGradient.addColorStop(0.8, 'hsla(230, 65%, 45%, 0.3)'); // 深藍紫色
+            coreGradient.addColorStop(0, 'hsla(55, 100%, 98%, 1.0)'); // 增加中心亮度到最大
+            coreGradient.addColorStop(0.1, 'hsla(50, 95%, 90%, 0.95)'); // 大幅增加亮度
+            coreGradient.addColorStop(0.2, 'hsla(260, 70%, 75%, 0.8)'); // 增加藍紫色亮度
+            coreGradient.addColorStop(0.4, 'hsla(250, 75%, 65%, 0.7)'); // 增加藍紫色亮度
+            coreGradient.addColorStop(0.6, 'hsla(240, 70%, 55%, 0.6)'); // 增加藍紫色亮度
+            coreGradient.addColorStop(0.8, 'hsla(230, 65%, 45%, 0.5)'); // 增加深藍紫色亮度
             coreGradient.addColorStop(1, 'transparent');
             
             ctx.fillStyle = coreGradient;
