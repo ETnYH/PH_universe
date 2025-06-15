@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 details: {
                     overview: '使用JavaScript、HTML和CSS實現的星際穿梭效果，提供沉浸式的視覺體驗。',
                     introduction: '專案中負責前端效果實現，創造出流暢的星際穿梭感。',
-                    timeline: { startDate: '2025/6', endDate: '2025/6', duration: '1個月', phases: [] },
+                    timeline: { startDate: '2025/6', endDate: '2025/6', duration: '2天', phases: [] },
                     features: ['星際穿梭效果','互動式體驗','響應式設計','高效能渲染'],
                     challenges: '',
                     results: '',
