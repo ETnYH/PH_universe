@@ -55,6 +55,22 @@ document.addEventListener('DOMContentLoaded', () => {
         color: { r: 255, g: 150, b: 100 },
         projects: [
             {
+                title: '星際宇宙銀河穿梭效果網站',
+                description: '運用網頁程式碼製作出精緻的效果，模擬星際穿梭的感覺。',
+                tech: ['JavaScript', 'HTML', 'CSS'],
+                details: {
+                    overview: '使用JavaScript、HTML和CSS實現的星際穿梭效果，提供沉浸式的視覺體驗。',
+                    introduction: '專案中負責前端效果實現，創造出流暢的星際穿梭感。',
+                    timeline: { startDate: '2025/6', endDate: '2025/6', duration: '1個月', phases: [] },
+                    features: ['星際穿梭效果','互動式體驗','響應式設計','高效能渲染'],
+                    challenges: '',
+                    results: '',
+                    media: { images: [], videos: [{src:"https://www.youtube-nocookie.com/embed/XzElYfpT45s?si=6BKaTkbZ94MTN3fq" }] },
+                    github: 'https://github.com/ETnYH/Galaxy_experience',
+                    demo: 'https://etnyh.github.io/Galaxy_experience/'
+                }
+            },
+            {
                 title: '心血管疾病預測網站',
                 description: '提供用戶註冊、登入及管理介面，並預測心血管風險。',
                 tech: ['JavaScript', 'HTML', 'CSS', 'PHP', 'MySQL'],
