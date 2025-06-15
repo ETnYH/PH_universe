@@ -125,6 +125,92 @@ body, html {
     z-index: 1;
 }
 
+/* Starfield 提示文字 */
+.starfield-hint {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.9);
+    /* 完全移除背景，純文字效果 */
+    background: none;
+    backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: center;
+    z-index: 10;
+    pointer-events: none;
+    letter-spacing: 1px;
+    /* 多層文字光暈效果 */
+    text-shadow: 
+        0 0 5px rgba(255, 255, 255, 0.9),
+        0 0 10px rgba(255, 255, 255, 0.7),
+        0 0 20px rgba(135, 206, 250, 0.6),
+        0 0 30px rgba(135, 206, 250, 0.4),
+        0 0 40px rgba(135, 206, 250, 0.2);
+    /* 優化動畫：更流暢的閃爍和浮動 */
+    animation: glow-pulse 3s ease-in-out infinite,
+               gentle-float 5s ease-in-out infinite;
+}
+
+/* 光暈脈動動畫 - 更細膩的閃爍效果 */
+@keyframes glow-pulse {
+    0%, 100% {
+        opacity: 0.7;
+        text-shadow: 
+            0 0 5px rgba(255, 255, 255, 0.6),
+            0 0 10px rgba(255, 255, 255, 0.4),
+            0 0 20px rgba(135, 206, 250, 0.3),
+            0 0 30px rgba(135, 206, 250, 0.2);
+    }
+    25% {
+        opacity: 0.9;
+        text-shadow: 
+            0 0 8px rgba(255, 255, 255, 0.8),
+            0 0 15px rgba(255, 255, 255, 0.6),
+            0 0 25px rgba(135, 206, 250, 0.5),
+            0 0 35px rgba(135, 206, 250, 0.3);
+    }
+    50% {
+        opacity: 1;
+        text-shadow: 
+            0 0 10px rgba(255, 255, 255, 1),
+            0 0 20px rgba(255, 255, 255, 0.8),
+            0 0 30px rgba(135, 206, 250, 0.7),
+            0 0 40px rgba(135, 206, 250, 0.4),
+            0 0 50px rgba(135, 206, 250, 0.2);
+    }
+    75% {
+        opacity: 0.85;
+        text-shadow: 
+            0 0 8px rgba(255, 255, 255, 0.7),
+            0 0 15px rgba(255, 255, 255, 0.5),
+            0 0 25px rgba(135, 206, 250, 0.4),
+            0 0 35px rgba(135, 206, 250, 0.25);
+    }
+}
+
+/* 輕微浮動動畫 - 增加動作感 */
+@keyframes gentle-float {
+    0%, 100% {
+        transform: translateX(-50%) translateY(0px);
+    }
+    25% {
+        transform: translateX(-50%) translateY(-2px);
+    }
+    50% {
+        transform: translateX(-50%) translateY(-4px);
+    }
+    75% {
+        transform: translateX(-50%) translateY(-2px);
+    }
+}
+
+
+
 .black-hole {
     display: none;
 }
@@ -293,6 +379,37 @@ body, html {
     box-shadow: 0 0 15px rgba(255, 100, 100, 0.5);
 }
 
+/* 返回按鈕樣式 */
+.back-btn {
+    background: linear-gradient(135deg, rgba(100, 200, 255, 0.2), rgba(138, 43, 226, 0.2));
+    border: 2px solid rgba(100, 200, 255, 0.6);
+    color: #64c8ff;
+    padding: 10px 16px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    min-width: 80px;
+}
+
+.back-btn:hover {
+    background: linear-gradient(135deg, rgba(100, 200, 255, 0.4), rgba(138, 43, 226, 0.4));
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(100, 200, 255, 0.4);
+    border-color: rgba(100, 200, 255, 0.8);
+}
+
+.back-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(100, 200, 255, 0.3);
+}
+
 .project-list {
     display: grid;
     gap: 20px;
@@ -419,7 +536,8 @@ body, html {
     justify-content: space-between;
     padding: 20px 30px;
     border-bottom: 2px solid rgba(138, 43, 226, 0.3);
-    background: rgba(255, 255, 255, 0.05);
+    background: linear-gradient(180deg, rgba(15, 20, 70, 0.95) 0%, rgba(25, 30, 100, 0.95) 100%);
+    backdrop-filter: blur(10px);
     border-radius: 20px 20px 0 0;
     position: sticky; /* Make header sticky */
     top: 0;
@@ -671,7 +789,6 @@ body, html {
     transition: all 0.3s ease;
     border: 2px solid transparent;
     min-width: 180px;
-    justify-content: center;
 }
 
 .github-btn {
@@ -681,8 +798,8 @@ body, html {
 
 .github-btn:hover {
     background: linear-gradient(135deg, rgba(100, 100, 100, 0.8), rgba(70, 70, 70, 0.8));
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(100, 100, 100, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(100, 100, 100, 0.3);
 }
 
 .demo-btn {
@@ -692,8 +809,8 @@ body, html {
 
 .demo-btn:hover {
     background: linear-gradient(135deg, rgba(138, 43, 226, 0.8), rgba(65, 105, 225, 0.8));
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(138, 43, 226, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(138, 43, 226, 0.4);
 }
 
 /* 證照連結樣式 */
@@ -985,7 +1102,130 @@ body, html {
 }
 
 /* 響應式設計 */
+/* 平板和小螢幕 */
 @media (max-width: 900px) {
+    .container {
+        flex-direction: column; /* 改為上下排列 */
+        height: 100vh; /* 固定為全螢幕高度 */
+        overflow: hidden; /* 防止滾動 */
+    }      .sidebar {
+        width: 100%;
+        order: 1; /* 確保 sidebar 在上方 */
+        height: 40vh; /* 個人簡介占 40% */
+        padding: 12px 15px;
+        border-left: none;
+        border-bottom: 2px solid rgba(65, 105, 225, 0.3);
+        box-shadow: 0 10px 30px rgba(25, 45, 170, 0.4);
+        position: relative;
+        overflow-y: auto; /* 允許個人簡介內容滾動 */
+        max-height: 40vh;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* 讓所有內容水平居中 */
+    }/* 個人資料區 - 水平排列，照片與姓名/職位同高，完全置中對齊 */
+    .profile-section {
+        display: flex;
+        align-items: center; /* 垂直居中對齊 */
+        justify-content: center; /* 水平置中 */
+        gap: 15px;
+        margin: 0 auto 12px auto; /* 上下邊距，左右自動居中 */
+        min-height: 100px; /* 設定最小高度 */
+        width: fit-content; /* 寬度根據內容調整 */
+        max-width: 100%; /* 不超過容器寬度 */
+    }
+    
+    .profile-pic {
+        width: 100px; /* 大照片 */
+        height: 100px;
+        margin: 0;
+        flex-shrink: 0;
+        object-fit: cover;
+    }
+    
+    .profile-pic-placeholder {
+        width: 100px;
+        height: 100px;
+        margin: 0;
+        flex-shrink: 0;
+    }    .profile-info {
+        flex: 0 1 auto; /* 不佔據額外空間，只根據內容調整 */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* 垂直居中 */
+        align-items: center; /* 水平居中 */
+        height: 100px; /* 與照片同高 */
+        min-width: 0; /* 允許收縮 */
+    }
+    
+    .sidebar h2 {
+        font-size: 1.2em;
+        margin: 0 0 8px 0;
+        text-align: center; /* 居中對齊 */
+        line-height: 1.3;
+    }
+    
+    .profile-info > p {
+        font-size: 0.8em;
+        margin: 0;
+        text-align: center; /* 居中對齊 */
+        line-height: 1.3;
+    }
+      /* 內容區域 - 網格布局，所有內容都是兩欄 */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* 嚴格兩欄 */
+        gap: 10px;
+        flex: 1;
+        overflow-y: auto;
+        width: 100%; /* 確保寬度 */
+        max-width: 100%; /* 限制最大寬度 */
+    }
+    
+    .grid-item {
+        background: rgba(255, 255, 255, 0.02);
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(138, 43, 226, 0.2);
+    }
+    
+    .sidebar h3 {
+        font-size: 0.85em;
+        margin: 0 0 6px 0;
+        text-align: center;
+        color: #c9a9dd;
+    }
+    
+    .sidebar p {
+        font-size: 0.7em;
+        line-height: 1.4;
+        margin-bottom: 6px;
+        text-align: left;
+    }
+    
+    .sidebar ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    
+    .sidebar li {
+        font-size: 0.65em;
+        padding: 2px 0;
+        border-left: 1px solid rgba(138, 43, 226, 0.3);
+        padding-left: 6px;
+        line-height: 1.3;
+    }    .main-content {
+        width: 100%;
+        order: 2;
+        height: 60vh; /* starfield 占 60% */
+        flex: none;
+    }
+    
+    body, html {
+        overflow: hidden;
+    }
+    
     .two-column-layout {
         grid-template-columns: 1fr;
         gap: 25px;
@@ -1009,540 +1249,349 @@ body, html {
     }
 }
 
-@media (max-width: 600px) {
-    .project-detail-header {
-        padding: 15px 20px;
+@media (max-width: 600px) {    .sidebar {        padding: 8px 12px;
+        height: 40vh; /* 保持 40% 高度 */
+        display: flex;
         flex-direction: column;
-        gap: 10px;
+        align-items: center; /* 讓所有內容水平居中 */
+    }/* 個人資料區 - 水平排列，完全居中對齊 */
+    .profile-section {
+        display: flex;
+        align-items: center;
+        justify-content: center; /* 水平置中 */
+        gap: 12px;
+        margin: 0 auto 10px auto; /* 上下邊距，左右自動居中 */
+        width: fit-content; /* 寬度根據內容調整 */
+        max-width: 100%; /* 不超過容器寬度 */
+        height: auto;
+    }
+    
+    .profile-pic {
+        width: 90px; /* 更大的頭像，與姓名/職位區域高度相符 */
+        height: 90px;
+        margin: 0; /* 移除默認 margin */
+        flex-shrink: 0;
+    }
+    
+    .profile-pic-placeholder {
+        width: 90px;
+        height: 90px;
+        margin: 0;
+        flex-shrink: 0;
+    }
+      .profile-info {
+        flex: 0 1 auto; /* 不佔據額外空間 */
+        height: 90px; /* 與頭像同高 */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center; /* 水平居中 */
+        min-width: 0; /* 允許收縮 */
+    }
+      .sidebar h2 {
+        font-size: 1.1em; /* 縮小標題 */
+        margin: 0 0 3px 0;
+        text-align: center; /* 居中對齊 */
+        line-height: 1.2;
+    }
+    
+    .sidebar > p:first-of-type,
+    .profile-info > p {
+        font-size: 0.7em;
+        margin: 0;
+        text-align: center; /* 居中對齊 */
+        line-height: 1.2;
+    }
+    
+    /* 內容區域 - 使用網格布局，所有內容都是兩欄 */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto; /* 固定兩行 */
+        gap: 8px;
+        flex: 1;
+        overflow-y: auto;
+    }
+    
+    .sidebar h3 {
+        font-size: 0.8em;
+        margin: 8px 0 4px 0;
         text-align: center;
     }
     
-    .project-detail-header h2 {
-        font-size: 1.6em;
+    .sidebar p {
+        font-size: 0.65em; /* 更小的文字 */
+        line-height: 1.3;
+        margin-bottom: 8px;
+        text-align: left;
     }
     
-    .link-buttons {
-        flex-direction: column;
-        align-items: center;
+    .sidebar ul {
+        margin: 0;
+        padding: 0;
     }
     
-    .link-btn {
-        min-width: 200px;
+    .sidebar li {
+        font-size: 0.6em; /* 更小的列表文字 */
+        padding: 1px 0;
+        border-left: 1px solid rgba(138, 43, 226, 0.3);
+        padding-left: 6px;
     }
     
-    .phase-item {
-        flex-direction: column;
-        gap: 10px;
+    .sidebar hr {
+        margin: 6px 0; /* 更小間距 */
+        display: none; /* 隱藏分隔線節省空間 */
     }
     
-    .phase-number {
-        align-self: flex-start;
+    /* 移除跨欄設置，所有內容都是兩欄 */
+    .sidebar p[style*="text-align: left"] {
+        font-size: 0.6em;
+        margin-bottom: 6px;    }
+    
+    .main-content {
+        height: 60vh; /* starfield 占 60% */
     }
     
-    .additional-images {
-        padding: 10px 15px;
-    }
-    
-    .image-thumbnail {
-        width: 100px;
-        height: 70px;
-    }
-}
-
+    /* 返回按鈕樣式 */
 .back-btn {
-    background: rgba(138, 43, 226, 0.2);
-    border: 2px solid rgba(138, 43, 226, 0.6);
-    color: #e8e3ff;
-    padding: 8px 15px;
-    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(100, 200, 255, 0.2), rgba(138, 43, 226, 0.2));
+    border: 2px solid rgba(100, 200, 255, 0.6);
+    color: #64c8ff;
+    padding: 6px 10px; /* 極小螢幕用更小的返回按鈕 */
+    border-radius: 25px;
+    font-size: 11px;
+    font-weight: bold;
     cursor: pointer;
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
     transition: all 0.3s ease;
+    white-space: nowrap;
+    min-width: 60px;
 }
 
 .back-btn:hover {
-    background: rgba(138, 43, 226, 0.4);
-    transform: translateX(-3px);
-}
-
-.project-detail-header h2 {
-    color: #e8e3ff;
-    font-size: 2.2em;
-    margin: 0;
-    text-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
-    flex-grow: 1;
-    text-align: center;
-}
-
-.project-detail-body {
-    display: grid;
-    gap: 25px;
-}
-
-.project-overview,
-.project-features,
-.project-tech,
-.project-challenges,
-.project-results,
-.project-links {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(138, 43, 226, 0.2);
-    border-radius: 15px;
-    padding: 20px;
-}
-
-.project-detail-body h3 {
-    color: #e8e3ff;
-    font-size: 1.3em;
-    margin: 0 0 15px 0;
-    text-shadow: 0 0 8px rgba(138, 43, 226, 0.4);
-    border-left: 4px solid rgba(138, 43, 226, 0.6);
-    padding-left: 15px;
-}
-
-.project-detail-body p {
-    color: #c8c3df;
-    line-height: 1.7;
-    margin: 0;
-}
-
-.project-features ul {
-    color: #c8c3df;
-    line-height: 1.8;
-    margin: 0;
-    padding-left: 20px;
-}
-
-.project-features li {
-    margin-bottom: 8px;
-    position: relative;
-}
-
-.project-features li::before {
-    content: "✨";
-    position: absolute;
-    left: -25px;
-    top: 0;
-}
-
-.link-buttons {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-.link-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
-    border-radius: 25px;
-    text-decoration: none;
-    color: #e8e3ff;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.github-btn {
-    background: linear-gradient(135deg, rgba(100, 100, 100, 0.6), rgba(70, 70, 70, 0.6));
-    border-color: rgba(100, 100, 100, 0.6);
-}
-
-.github-btn:hover {
-    background: linear-gradient(135deg, rgba(100, 100, 100, 0.8), rgba(70, 70, 70, 0.8));
+    background: linear-gradient(135deg, rgba(100, 200, 255, 0.4), rgba(138, 43, 226, 0.4));
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(100, 100, 100, 0.3);
+    box-shadow: 0 8px 25px rgba(100, 200, 255, 0.4);
+    border-color: rgba(100, 200, 255, 0.8);
 }
 
-.demo-btn {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.6), rgba(65, 105, 225, 0.6));
-    border-color: rgba(138, 43, 226, 0.6);
+.back-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(100, 200, 255, 0.3);
 }
 
-.demo-btn:hover {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.8), rgba(65, 105, 225, 0.8));
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(138, 43, 226, 0.4);
+.project-detail-header {
+        padding: 12px 15px;
+        flex-direction: row; /* 保持水平排列 */
+        justify-content: space-between; /* 兩端對齊 */
+        align-items: center; /* 垂直居中 */
+        gap: 10px;
+        min-height: 60px; /* 確保足夠高度 */
+    }
+      .project-detail-header h2 {
+        font-size: 1.3em; /* 稍微縮小以適應水平排列 */
+        margin: 0; /* 移除邊距 */
+        flex: 1; /* 讓標題佔據中間空間 */
+        text-align: center; /* 標題居中 */
+        white-space: nowrap; /* 防止文字換行 */
+        overflow: hidden; /* 隱藏溢出文字 */
+        text-overflow: ellipsis; /* 顯示省略號 */
+    }
 }
 
-.project-detail-btn {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.6), rgba(65, 105, 225, 0.6));
-    color: #e8e3ff;
-    padding: 10px 20px;
-    border: 1px solid rgba(138, 43, 226, 0.6);
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.project-detail-btn:hover {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.8), rgba(65, 105, 225, 0.8));
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(138, 43, 226, 0.4);
-}
-
-/* 專案介紹樣式 */
-.project-introduction {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(138, 43, 226, 0.2);
-    border-radius: 15px;
-    padding: 20px;
-}
-
-/* 專案時間線樣式 */
-.project-timeline {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(138, 43, 226, 0.2);
-    border-radius: 15px;
-    padding: 20px;
-}
-
-.timeline-summary {
-    background: rgba(138, 43, 226, 0.1);
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
-}
-
-.timeline-summary p {
-    margin: 5px 0;
-    color: #e8e3ff;
-}
-
-.timeline-phases {
-    display: grid;
-    gap: 15px;
-}
-
-.timeline-phase {
-    background: rgba(255, 255, 255, 0.03);
-    border-left: 4px solid rgba(138, 43, 226, 0.6);
-    border-radius: 8px;
-    padding: 15px;
-    transition: all 0.3s ease;
-}
-
-.timeline-phase:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateX(5px);
-}
-
-.phase-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 10px;
-}
-
-.phase-header h4 {
-    color: #e8e3ff;
-    font-size: 1.1em;
-    margin: 0;
-    text-shadow: 0 0 5px rgba(138, 43, 226, 0.4);
-}
-
-.phase-period {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(65, 105, 225, 0.3));
-    color: #e8e3ff;
-    padding: 4px 10px;
-    border-radius: 15px;
-    font-size: 0.85em;
-    font-weight: bold;
-    white-space: nowrap;
-}
-
-.phase-description {
-    color: #c8c3df;
-    line-height: 1.6;
-    margin: 0;
-    font-size: 0.95em;
-}
-
-/* 媒體畫廊樣式 */
-.project-media {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(138, 43, 226, 0.2);
-    border-radius: 15px;
-    padding: 20px;
-}
-
-.media-images, .media-videos {
-    margin-bottom: 25px;
-}
-
-.media-images h4, .media-videos h4 {
-    color: #e8e3ff;
-    font-size: 1.1em;
-    margin: 0 0 15px 0;
-    text-shadow: 0 0 5px rgba(138, 43, 226, 0.4);
-    border-left: 3px solid rgba(138, 43, 226, 0.6);
-    padding-left: 12px;
-}
-
-.image-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.image-item {
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(138, 43, 226, 0.2);
-}
-
-.image-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(138, 43, 226, 0.3);
-    border-color: rgba(138, 43, 226, 0.5);
-}
-
-.image-item img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.image-item:hover img {
-    transform: scale(1.05);
-}
-
-.image-caption {
-    padding: 12px 15px;
-    color: #c8c3df;
-    font-size: 0.9em;
-    line-height: 1.4;
-    background: rgba(0, 0, 0, 0.3);
-}
-
-.video-gallery {
-    display: grid;
-    gap: 25px;
-}
-
-.video-item {
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid rgba(138, 43, 226, 0.2);
-}
-
-.video-wrapper {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
-    background: #000;
-}
-
-.video-wrapper iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
-.video-info {
-    padding: 15px;
-}
-
-.video-info h5 {
-    color: #e8e3ff;
-    font-size: 1.1em;
-    margin: 0 0 8px 0;
-    text-shadow: 0 0 5px rgba(138, 43, 226, 0.4);
-}
-
-.video-info p {
-    color: #c8c3df;
-    line-height: 1.5;
-    margin: 0;
-    font-size: 0.9em;
-}
-
-/* 圖片模態框樣式 */
-.image-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(10px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-    animation: fadeIn 0.3s ease-out;
-}
-
-.image-modal-content {
-    position: relative;
-    max-width: 90vw;
-    max-height: 90vh;
-    background: rgba(25, 30, 100, 0.3);
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 25px 80px rgba(138, 43, 226, 0.4);
-}
-
-.image-modal-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(255, 100, 100, 0.8);
-    border: none;
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 24px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    z-index: 2001;
-}
-
-.image-modal-close:hover {
-    background: rgba(255, 100, 100, 1);
-    transform: scale(1.1);
-}
-
-.image-modal img {
-    max-width: 100%;
-    max-height: 80vh;
-    object-fit: contain;
-    display: block;
-}
-
-.image-modal-caption {
-    padding: 20px;
-    color: #e8e3ff;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.8);
-    font-size: 1.1em;
-    line-height: 1.5;
-}
-
-/* 響應式設計 */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
+    /* 觸摸優化 */
+    .sidebar a,
+    .sidebar li {
+        min-height: 44px; /* iOS 推薦的最小觸摸區域 */
+        display: flex;
+        align-items: center;
+    }
+    
+    /* 改善觸摸反饋 */
+    canvas {
+        touch-action: manipulation; /* 改善觸摸性能 */
+    }
+    
+    /* 確保專案面板在手機上易於使用 */
     .project-panel-content {
-        margin: 20px;
-        padding: 20px;
+        width: 95vw;
         max-height: 90vh;
+        margin: 5vh auto;
     }
     
-    .project-panel-header h2 {
-        font-size: 1.5em;
+    .project-item {
+        padding: 15px;
+        margin-bottom: 15px;
     }
     
-    .tech-tags {
-        gap: 5px;
+    .close-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 24px;
+    }      /* Starfield 提示文字 - 極小螢幕 */
+    .starfield-hint {
+        top: 10px;
+        font-size: 12px;
+        padding: 0;
+        max-width: 85%;
+        letter-spacing: 0.5px;
+        /* 保持相同的動畫但減少強度 */
+        animation: glow-pulse 3s ease-in-out infinite,
+                   gentle-float 5s ease-in-out infinite;
+        text-shadow: 
+            0 0 4px rgba(255, 255, 255, 0.8),
+            0 0 8px rgba(255, 255, 255, 0.6),
+            0 0 15px rgba(135, 206, 250, 0.5),
+            0 0 25px rgba(135, 206, 250, 0.3);
     }
-    
-    .tech-tag {
-        font-size: 0.8em;
-        padding: 4px 8px;
-    }
+}
 
-    .project-detail-content {
-        margin: 15px;
-        padding: 20px;
-        max-height: 92vh;
+/* 非常小的螢幕 (小於 480px) */
+@media (max-width: 480px) {
+    .sidebar {
+        padding: 6px 10px;        height: 40vh; /* 保持 40% */
+        align-items: center; /* 讓所有內容水平居中 */
+    }.profile-pic {
+        width: 75px; /* 保持合適大小的頭像，不要太小 */
+        height: 75px;
+    }
+    
+    .profile-pic-placeholder {
+        width: 75px;
+        height: 75px;
+    }
+    
+    .profile-info {
+        height: 75px; /* 與頭像同高 */
+    }
+    
+    .sidebar h2 {
+        font-size: 1em;
+        line-height: 1.1;
+    }
+    
+    .sidebar > p:first-of-type {
+        font-size: 0.65em;
+    }
+    
+    .content-grid {
+        gap: 6px;
+    }
+    
+    .sidebar h3 {
+        font-size: 0.75em;
+        margin: 6px 0 3px 0;
+    }
+    
+    .sidebar p {
+        font-size: 0.6em;
+        margin-bottom: 6px;
+    }
+    
+    .sidebar li {
+        font-size: 0.55em;
+        padding: 0.5px 0;
+        padding-left: 4px;
+    }
+    
+    .main-content {        height: 60vh; /* starfield 占 60% */
+    }    /* 極小螢幕仍保持兩欄佈局 */
+    .content-grid {
+        grid-template-columns: 1fr 1fr; /* 保持兩欄 */
+        gap: 4px; /* 更小的間距以適應螢幕 */
+    }
+    
+    .grid-item {
+        padding: 6px; /* 減少內邊距 */
+        font-size: 0.9em; /* 稍微縮小字體 */
+    }
+    
+    .grid-item[style*="grid-column"] {
+        grid-column: 1; /* 重置跨欄設置 */
     }
     
     .project-detail-header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
+        padding: 10px 12px;
+        flex-direction: row; /* 保持水平排列 */
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        min-height: 50px;
     }
     
     .project-detail-header h2 {
-        font-size: 1.8em;
-    }
-    
-    .link-buttons {
-        justify-content: center;
-    }
-    
-    .back-btn {
-        align-self: flex-start;
-    }
-
-    .timeline-phase {
-        padding: 12px;
-    }
-    
-    .phase-header {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .phase-period {
-        align-self: flex-start;
-        font-size: 0.8em;
-    }
-    
-    .image-gallery {
-        grid-template-columns: 1fr;
-    }
-    
-    .image-item img {
-        height: 180px;
-    }
-    
-    .video-wrapper {
-        padding-bottom: 60%;
-    }
-    
-    .image-modal-content {
-        max-width: 95vw;
-        max-height: 95vh;
-    }
-    
-    .image-modal img {
-        max-height: 70vh;
-    }
-    
-    .image-modal-caption {
-        padding: 15px;
-        font-size: 1em;
+        font-size: 1.1em; /* 極小螢幕用更小字體 */
+        margin: 0;
+        flex: 1;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 
-@media (max-width: 480px) {
-    .timeline-summary {
-        padding: 12px;
+@media (min-width: 901px) {
+    .sidebar {
+        display: block; /* 覆蓋 flex 設置 */
     }
     
-    .timeline-summary p {
-        font-size: 0.9em;
+    .profile-section {
+        display: block; /* 桌面版使用原始佈局 */
+    }
+      .profile-pic-placeholder {
+        margin: 0 auto 20px; /* 恢復原始樣式 */
     }
     
-    .image-item img {
-        height: 150px;
+    .profile-info {
+        height: auto; /* 桌面版使用自動高度 */
     }
     
-    .video-info {
-        padding: 12px;
+    .profile-info h2 {
+        text-align: center; /* 桌面版居中 */
     }
     
-    .video-info h5 {
-        font-size: 1em;
+    .profile_info p {
+        text-align: center; /* 桌面版居中 */
     }
     
-    .video-info p {
-        font-size: 0.85em;
+    .content-grid {
+        display: block; /* 桌面版不使用網格 */
+    }
+    
+    .grid-item {
+        display: contents; /* 桌面版正常顯示 */
+    }
+}
+
+/* 手機版特定樣式 */
+@media (max-width: 600px) {
+    .back-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        min-width: 70px;
+        gap: 4px;
+    }    /* Starfield 提示文字 - 手機版 */
+    .starfield-hint {
+        top: 15px;
+        font-size: 14px;
+        padding: 0;
+        max-width: 90%;
+        letter-spacing: 0.8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        /* 調整手機版光暈效果 */
+        text-shadow: 
+            0 0 4px rgba(255, 255, 255, 0.8),
+            0 0 8px rgba(255, 255, 255, 0.6),
+            0 0 16px rgba(135, 206, 250, 0.5),
+            0 0 24px rgba(135, 206, 250, 0.3);
+        /* 保持相同動畫 */
+        animation: glow-pulse 3s ease-in-out infinite,
+                   gentle-float 5s ease-in-out infinite;
     }
 }
