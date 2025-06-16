@@ -33,6 +33,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
             {
+                title: 'AI生圖工具',
+                description: '使用stable diffusion模型生成高品質圖片。提高美術設計效率',
+                tech: ['Python', 'Pytorch', 'Stable Diffusion', 'Hugging Face'],
+                details: {
+                    overview: '本工具基於stable diffusion模型，能夠生成高品質的圖片，並提供多種風格選擇。',
+                    introduction: '為了提升美術設計效率，開發此AI生圖工具，能快速生成多樣化的圖片素材。',
+                    timeline: { startDate: '2024/12', endDate: '2024/12', duration: '14天', phases: [] },
+                    features: ['高品質圖片生成','多種風格選擇','即時預覽','簡易操作介面'],
+                    challenges: '',
+                    results: '',
+                    media: { images: [], videos: [{src:'https://www.youtube-nocookie.com/embed/A0r_gUpiiYs?si=Fu1xqa2CnK0OL3zr'}] },
+                    github: 'https://github.com/YHOneBox/AI-Application-project',
+                    demo: ''
+                }
+            }
+            ,
+            {
                 title: 'Line機器人-飯新聞 飯Tastic',
                 description: '使用ChatGPT API實現的Line互動機器人，提供每日餐飲建議。',
                 tech: ['ChatGPT API', 'LINE Messaging API'],
