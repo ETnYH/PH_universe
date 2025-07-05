@@ -900,11 +900,6 @@ body::before {
     transform: scale(1.1) rotate(90deg);
 }
 
-.detail-header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
 .detail-title {
     font-size: 2.5em;
     margin-bottom: 15px;
@@ -916,7 +911,7 @@ body::before {
     background-size: 200% 200%;
     animation: gradientText 3s ease infinite;
     font-weight: 600;
-    text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .detail-subtitle {
@@ -1411,6 +1406,109 @@ body::before {
         top: 12px;
         right: 15px;
     }
+    
+    /* 作品詳細資料模態框手機版調整 */
+    .detail-modal-content {
+        width: 98%;
+        height: 98%;
+        margin: 1% auto;
+        padding: 20px;
+    }
+    
+    .detail-close {
+        top: 15px;
+        right: 20px;
+        font-size: 2em;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .detail-title {
+        font-size: 1.8em;
+        margin-bottom: 10px;
+    }
+    
+    .detail-subtitle {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+    }
+    
+    .detail-image {
+        margin-bottom: 20px;
+        min-height: 150px;
+        max-height: 400px;
+    }
+    
+    /* 將詳細內容改為上下排列 */
+    .detail-content {
+        display: block;
+        margin-bottom: 20px;
+    }
+    
+    .detail-main {
+        margin-bottom: 25px;
+    }
+    
+    .detail-main h3 {
+        font-size: 1.2em;
+        margin: 20px 0 12px 0;
+        padding-left: 12px;
+    }
+    
+    .detail-main p {
+        font-size: 0.9em;
+        margin-bottom: 12px;
+    }
+    
+    .detail-sidebar {
+        width: 100%;
+        padding: 20px;
+        margin-top: 0;
+    }
+    
+    .detail-info-section {
+        margin-bottom: 20px;
+    }
+    
+    .detail-info-section h4 {
+        font-size: 1em;
+        margin-bottom: 10px;
+    }
+    
+    .detail-info-section p {
+        font-size: 0.85em;
+    }
+    
+    .detail-tags {
+        gap: 6px;
+    }
+    
+    .detail-tag {
+        padding: 5px 10px;
+        font-size: 0.8em;
+        border-radius: 12px;
+    }
+    
+    /* 輪播控制按鈕手機版調整 */
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .carousel-control-prev {
+        left: 10px;
+    }
+    
+    .carousel-control-next {
+        right: 10px;
+    }
+    
+    .carousel-control-prev::before,
+    .carousel-control-next::before {
+        font-size: 14px;
+    }
 }
 
 /* 區塊標題樣式統一 */
@@ -1573,5 +1671,108 @@ body::before {
         font-size: 1.2em;
         top: 12px;
         right: 15px;
+    }
+    
+    /* 作品詳細資料模態框手機版調整 */
+    .detail-modal-content {
+        width: 98%;
+        height: 98%;
+        margin: 1% auto;
+        padding: 20px;
+    }
+    
+    .detail-close {
+        top: 15px;
+        right: 20px;
+        font-size: 2em;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .detail-title {
+        font-size: 1.8em;
+        margin-bottom: 10px;
+    }
+    
+    .detail-subtitle {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+    }
+    
+    .detail-image {
+        margin-bottom: 20px;
+        min-height: 150px;
+        max-height: 400px;
+    }
+    
+    /* 將詳細內容改為上下排列 */
+    .detail-content {
+        display: block;
+        margin-bottom: 20px;
+    }
+    
+    .detail-main {
+        margin-bottom: 25px;
+    }
+    
+    .detail-main h3 {
+        font-size: 1.2em;
+        margin: 20px 0 12px 0;
+        padding-left: 12px;
+    }
+    
+    .detail-main p {
+        font-size: 0.9em;
+        margin-bottom: 12px;
+    }
+    
+    .detail-sidebar {
+        width: 100%;
+        padding: 20px;
+        margin-top: 0;
+    }
+    
+    .detail-info-section {
+        margin-bottom: 20px;
+    }
+    
+    .detail-info-section h4 {
+        font-size: 1em;
+        margin-bottom: 10px;
+    }
+    
+    .detail-info-section p {
+        font-size: 0.85em;
+    }
+    
+    .detail-tags {
+        gap: 6px;
+    }
+    
+    .detail-tag {
+        padding: 5px 10px;
+        font-size: 0.8em;
+        border-radius: 12px;
+    }
+    
+    /* 輪播控制按鈕手機版調整 */
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .carousel-control-prev {
+        left: 10px;
+    }
+    
+    .carousel-control-next {
+        right: 10px;
+    }
+    
+    .carousel-control-prev::before,
+    .carousel-control-next::before {
+        font-size: 14px;
     }
 }
